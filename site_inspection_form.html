@@ -62,16 +62,15 @@
     }
 
     /* Header */
-    .header-bar {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 18px 28px;
-      background: linear-gradient(120deg, var(--vista-blue-light) 0%, var(--vista-blue) 40%, var(--vista-blue-dark) 100%);
-      color: #ffffff;
-      overflow: hidden;
+    <!-- Header -->
+<div class="header-bar">
+  <div class="header-left">
+    <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
+    <p>Worksite Inspection Form</p>
+  </div>
+  <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
+</div>
+
     }
 
     /* subtle diagonal lines */
@@ -102,15 +101,15 @@
       text-transform: uppercase;
       margin: 0;
       font-family: "Montserrat", sans-serif;
-      font-weight: 400; /* default for GEOMATICS */
+      font-weight: 400; /* base */
     }
 
     .vista-bold {
-      font-weight: 700; /* Bold Montserrat */
+      font-weight: 700; /* VISTA bold */
     }
 
     .geomatics-regular {
-      font-weight: 400; /* Regular Montserrat */
+      font-weight: 400; /* GEOMATICS regular */
     }
 
     .header-left p {
@@ -381,8 +380,7 @@
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
-        <img<img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
- src="../vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
+        <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
       <form action="#" method="post" enctype="multipart/form-data">
