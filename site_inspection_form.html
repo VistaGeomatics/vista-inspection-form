@@ -10,9 +10,9 @@
 
   <style>
     :root {
-      --vista-blue: #165f7d;
-      --vista-blue-light: #2a7fa3;
-      --vista-blue-dark: #0b3045;
+      --vista-blue: #165f7d;        /* main Vista blue */
+      --vista-blue-light: #2a7fa3;  /* lighter blue */
+      --vista-blue-dark: #0b3045;   /* darker blue */
 
       --bg-body: #eef3f9;
       --bg-card: #ffffff;
@@ -51,6 +51,7 @@
       position: relative;
     }
 
+    /* Decorative top glow */
     .container::before {
       content: "";
       position: absolute;
@@ -73,6 +74,7 @@
       overflow: hidden;
     }
 
+    /* subtle diagonal lines */
     .header-bar::after {
       content: "";
       position: absolute;
@@ -100,7 +102,7 @@
       text-transform: uppercase;
       margin: 0;
       font-family: "Montserrat", sans-serif;
-      font-weight: 400;
+      font-weight: 400; /* base */
     }
 
     .vista-bold {
@@ -144,6 +146,7 @@
       overflow: hidden;
     }
 
+    /* section banner strip */
     .section::before {
       content: "";
       position: absolute;
@@ -228,6 +231,7 @@
       resize: vertical;
     }
 
+    /* Fix By: Date + Name layout */
     .fix-by {
       display: flex;
       gap: 6px;
@@ -235,13 +239,14 @@
     }
 
     .fix-by input[type="date"] {
-      flex: 0 0 130px;
+      flex: 0 0 130px; /* date width */
     }
 
     .fix-by input[type="text"] {
       flex: 1;
     }
 
+    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -287,17 +292,17 @@
       margin-top: 10px;
     }
 
-    .photos-preview a {
-      display: inline-block;
-    }
-
     .photos-preview img {
-      max-width: 220px;   /* larger thumbnails */
-      max-height: 220px;
+      max-width: 140px;       /* a bit bigger */
+      max-height: 140px;
       object-fit: cover;
       border-radius: 10px;
       border: 1px solid #d1e0f0;
       box-shadow: 0 6px 14px rgba(5, 41, 66, 0.18);
+    }
+
+    .photos-preview a {
+      text-decoration: none;
     }
 
     /* Buttons */
@@ -366,7 +371,7 @@
 
       .header-logo {
         align-self: flex-end;
-        height: 70px;
+        height: 56px;
       }
     }
   </style>
@@ -380,11 +385,12 @@
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
-        <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
+        <!-- Make sure vista-geomatics.png is in the SAME folder as this HTML file -->
+        <img src="../vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
       <form action="#" method="post" enctype="multipart/form-data">
-        <!-- General Information -->
+        <!-- Basic Info -->
         <div class="section">
           <div class="section-title">General Information</div>
           <p class="section-subtext">Basic project and site details for this inspection.</p>
@@ -404,15 +410,7 @@
           </div>
         </div>
 
-        <!-- Worksite Inspection – Site Conditions / Administration -->
-        <!-- (unchanged table content) -->
-        <!-- I’ll leave all the inspection rows as you already had them -->
-        <!-- START of existing sections -->
-        <!-- You can keep everything between here and the photos section exactly as in your last version -->
-        <!-- For brevity, I'm not repeating every row, but your real file should keep them all. -->
-        <!-- ... your existing tables for Site Conditions, PPE, Safety Equipment ... -->
-
-        <!-- For clarity: I'm including them very quickly in compressed form -->
+        <!-- Worksite Inspection - Site Conditions / Admin -->
         <div class="section">
           <div class="section-title">Worksite Inspection – Site Conditions / Administration</div>
           <p class="section-subtext">Administrative controls, documentation, and general housekeeping.</p>
@@ -428,56 +426,153 @@
             <tbody>
               <tr>
                 <td>Hazard assessment completed prior to starting work?</td>
-                <td><select name="ha_completed" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ha_completed" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ha_completed_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ha_completed_fix_date"><input type="text" name="ha_completed_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ha_completed_fix_date">
+                    <input type="text" name="ha_completed_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Hazard assessment reviewed and signed by all workers on site?</td>
-                <td><select name="ha_reviewed" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ha_reviewed" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ha_reviewed_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ha_reviewed_fix_date"><input type="text" name="ha_reviewed_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ha_reviewed_fix_date">
+                    <input type="text" name="ha_reviewed_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Effective Emergency Response Plan developed with emergency numbers?</td>
-                <td><select name="erp_effective" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="erp_effective" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="erp_effective_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="erp_effective_fix_date"><input type="text" name="erp_effective_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="erp_effective_fix_date">
+                    <input type="text" name="erp_effective_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Safe work practices and safe job procedures being used?</td>
-                <td><select name="swp_used" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="swp_used" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="swp_used_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="swp_used_fix_date"><input type="text" name="swp_used_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="swp_used_fix_date">
+                    <input type="text" name="swp_used_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Road signs, pylons available and used as required?</td>
-                <td><select name="road_signs" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="road_signs" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="road_signs_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="road_signs_fix_date"><input type="text" name="road_signs_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="road_signs_fix_date">
+                    <input type="text" name="road_signs_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Work vehicle reasonably clean?</td>
-                <td><select name="vehicle_clean" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="vehicle_clean" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="vehicle_clean_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="vehicle_clean_fix_date"><input type="text" name="vehicle_clean_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="vehicle_clean_fix_date">
+                    <input type="text" name="vehicle_clean_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Vista sign displayed on the truck? (ALS regulation)</td>
-                <td><select name="vista_sign" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="vista_sign" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="vista_sign_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="vista_sign_fix_date"><input type="text" name="vista_sign_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="vista_sign_fix_date">
+                    <input type="text" name="vista_sign_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Clean and tidy work site?</td>
-                <td><select name="clean_site" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="clean_site" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="clean_site_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="clean_site_fix_date"><input type="text" name="clean_site_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="clean_site_fix_date">
+                    <input type="text" name="clean_site_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- PPE Section -->
         <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
           <p class="section-subtext">Confirm required PPE is available and being used appropriately.</p>
@@ -493,38 +588,99 @@
             <tbody>
               <tr>
                 <td>Hard hat worn when required?</td>
-                <td><select name="ppe_hard_hat" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ppe_hard_hat" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ppe_hard_hat_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ppe_hard_hat_fix_date"><input type="text" name="ppe_hard_hat_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_hard_hat_fix_date">
+                    <input type="text" name="ppe_hard_hat_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Safety glasses or eye protection worn when required?</td>
-                <td><select name="ppe_eye" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ppe_eye" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ppe_eye_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_eye_fix_date">
+                    <input type="text" name="ppe_eye_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
-                <td><select name="ppe_clothing" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ppe_clothing" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ppe_clothing_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ppe_clothing_fix_date"><input type="text" name="ppe_clothing_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_clothing_fix_date">
+                    <input type="text" name="ppe_clothing_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
-                <td><select name="ppe_footwear" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ppe_footwear" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ppe_footwear_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ppe_footwear_fix_date"><input type="text" name="ppe_footwear_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_footwear_fix_date">
+                    <input type="text" name="ppe_footwear_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Hearing protection available and worn if required?</td>
-                <td><select name="ppe_hearing" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="ppe_hearing" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="ppe_hearing_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="ppe_hearing_fix_date"><input type="text" name="ppe_hearing_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_hearing_fix_date">
+                    <input type="text" name="ppe_hearing_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
 
+        <!-- Safety Equipment Section -->
         <div class="section">
           <div class="section-title">Safety Equipment</div>
           <p class="section-subtext">Emergency and first aid equipment checks.</p>
@@ -540,33 +696,74 @@
             <tbody>
               <tr>
                 <td>Fire extinguisher in place and signed?</td>
-                <td><select name="fire_ext_in_place" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="fire_ext_in_place" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="fire_ext_in_place_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="fire_ext_in_place_fix_date"><input type="text" name="fire_ext_in_place_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="fire_ext_in_place_fix_date">
+                    <input type="text" name="fire_ext_in_place_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Fire extinguisher within service date?</td>
-                <td><select name="fire_ext_service" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="fire_ext_service" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="fire_ext_service_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="fire_ext_service_fix_date"><input type="text" name="fire_ext_service_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="fire_ext_service_fix_date">
+                    <input type="text" name="fire_ext_service_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>Alberta Level 2 first aid kit available and complete?</td>
-                <td><select name="first_aid_kit" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
+                <td>
+                  <select name="first_aid_kit" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
                 <td><textarea name="first_aid_kit_ca"></textarea></td>
-                <td><div class="fix-by"><input type="date" name="first_aid_kit_fix_date"><input type="text" name="first_aid_kit_fix_name" placeholder="Name"></div></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="first_aid_kit_fix_date">
+                    <input type="text" name="first_aid_kit_fix_name" placeholder="Name">
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <!-- END of existing inspection sections -->
 
         <!-- Photos Upload -->
         <div class="section">
           <div class="section-title">Site Photos</div>
           <p class="section-subtext">Attach one or more photos to support your inspection findings.</p>
           <label for="photos">Upload site photos (you can select multiple):</label>
-          <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
+          <input
+            type="file"
+            id="photos"
+            name="photos[]"
+            accept="image/*"
+            multiple
+          >
           <p class="hint">Accepted: JPG, PNG, HEIC. Large files may take longer to upload.</p>
           <div id="photosPreview" class="photos-preview"></div>
         </div>
@@ -577,7 +774,7 @@
           <textarea name="notes" placeholder="Additional observations, hazards, corrective actions, or follow-up requirements."></textarea>
         </div>
 
-        <!-- Inspector Sign-Off -->
+        <!-- Sign-off -->
         <div class="section">
           <div class="section-title">Inspector Sign-Off</div>
           <div class="grid-3">
@@ -632,7 +829,7 @@
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
-    // Helper: read a File as data URL (for PDF images)
+    // Helper: read a File as data URL (base64)
     function fileToDataURL(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -641,7 +838,34 @@
       });
     }
 
-    // Photo preview: clickable thumbnails that open full size
+    // Helper: compress image (resize + JPEG quality)
+    async function compressImage(file, maxDim = 1600, quality = 0.7) {
+      const baseUrl = await fileToDataURL(file);
+
+      const img = new Image();
+      img.src = baseUrl;
+      await new Promise(res => { img.onload = res; });
+
+      let width = img.width;
+      let height = img.height;
+
+      const scale = Math.min(maxDim / width, maxDim / height, 1);
+      width = width * scale;
+      height = height * scale;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+      return { dataUrl, width, height };
+    }
+
+    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -666,20 +890,26 @@
       });
     }
 
-    // Download form as PDF (form screenshot + full-res photos)
+    // Download form as PDF (form screenshot + compressed full-res photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'pt',
+          format: 'a4',
+          compress: true
+        });
+
         const element = document.querySelector('.container');
 
         window.scrollTo(0, 0);
 
         const canvas = await html2canvas(element, { scale: 2 });
-
         const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'pt', 'a4');
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
@@ -690,7 +920,7 @@
         let heightLeft = imgHeight;
         let position = 0;
 
-        // First page(s) – screenshot of form
+        // First page(s): screenshot of the form
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
 
@@ -701,7 +931,7 @@
           heightLeft -= pageHeight;
         }
 
-        // Extra pages with full-resolution attached photos
+        // Extra pages with COMPRESSED photos
         if (photosInput && photosInput.files.length > 0) {
           pdf.addPage();
           pdf.setFontSize(14);
@@ -716,32 +946,19 @@
           for (const file of photosInput.files) {
             if (!file.type.startsWith('image/')) continue;
 
-            const dataUrl = await fileToDataURL(file);
+            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
 
-            // Create a temporary Image to get real dimensions
-            const img = new Image();
-            img.src = dataUrl;
-            await new Promise(res => { img.onload = res; });
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            const drawW = width * ratio;
+            const drawH = height * ratio;
 
-            let w = img.width;
-            let h = img.height;
-            const ratio = Math.min(maxWidth / w, maxHeight / h);
-            w *= ratio;
-            h *= ratio;
-
-            if (y + h > pageH - 40) {
+            if (y + drawH > pageH - 40) {
               pdf.addPage();
               y = 40;
             }
 
-            // Choose format based on file type (fallback to JPEG)
-            let format = 'JPEG';
-            if (file.type.includes('png')) {
-              format = 'PNG';
-            }
-
-            pdf.addImage(dataUrl, format, x, y, w, h);
-            y += h + 20;
+            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+            y += drawH + 20;
           }
         }
 
