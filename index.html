@@ -146,11 +146,6 @@
       overflow: hidden;
     }
 
-    /* Slightly tighter sections (for page 2) */
-    .section-compact {
-      margin-bottom: 16px; /* was 24px */
-    }
-
     /* section banner strip */
     .section::before {
       content: "";
@@ -382,7 +377,7 @@
       }
 
       .header-logo {
-        alignself: flex-end;
+        align-self: flex-end;
         height: 56px;
       }
     }
@@ -584,8 +579,8 @@
           </table>
         </div>
 
-        <!-- PPE Section (compact) -->
-        <div class="section section-compact">
+        <!-- PPE Section -->
+        <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
           <p class="section-subtext">Confirm required PPE is available and being used appropriately.</p>
           <table>
@@ -698,8 +693,8 @@
           </table>
         </div>
 
-        <!-- Safety Equipment Section (compact) -->
-        <div class="section section-compact">
+        <!-- Safety Equipment Section -->
+        <div class="section">
           <div class="section-title">Safety Equipment</div>
           <p class="section-subtext">Emergency and first aid equipment checks.</p>
           <table>
@@ -713,38 +708,20 @@
             </thead>
             <tbody>
               <tr>
-                <td>Fire extinguisher in place and signed?</td>
+                <td>Fire extinguishers are in place, signed, and within service date?</td>
                 <td>
-                  <select name="fire_ext_in_place" class="ynna-select">
+                  <select name="fire_ext_all" class="ynna-select">
                     <option value="">--</option>
                     <option>Yes</option>
                     <option>No</option>
                     <option>N/A</option>
                   </select>
                 </td>
-                <td><textarea name="fire_ext_in_place_ca"></textarea></td>
+                <td><textarea name="fire_ext_all_ca"></textarea></td>
                 <td>
                   <div class="fix-by">
-                    <input type="date" name="fire_ext_in_place_fix_date">
-                    <input type="text" name="fire_ext_in_place_fix_name">
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Fire extinguisher within service date?</td>
-                <td>
-                  <select name="fire_ext_service" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
-                  </select>
-                </td>
-                <td><textarea name="fire_ext_service_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="fire_ext_service_fix_date">
-                    <input type="text" name="fire_ext_service_fix_name">
+                    <input type="date" name="fire_ext_all_fix_date">
+                    <input type="text" name="fire_ext_all_fix_name">
                   </div>
                 </td>
               </tr>
@@ -788,8 +765,8 @@
           </table>
         </div>
 
-        <!-- Photos Upload (compact) -->
-        <div class="section section-compact">
+        <!-- Photos Upload -->
+        <div class="section">
           <div class="section-title">Site Photos</div>
           <p class="section-subtext">Attach one or more photos to support your inspection findings.</p>
           <label for="photos">Upload site photos (you can select multiple):</label>
@@ -804,14 +781,14 @@
           <div id="photosPreview" class="photos-preview"></div>
         </div>
 
-        <!-- Notes / Comments (compact) -->
-        <div class="section section-compact">
+        <!-- Notes / Comments -->
+        <div class="section">
           <div class="section-title">Notes / Comments</div>
           <textarea name="notes" placeholder="Additional observations, hazards, corrective actions, or follow-up requirements."></textarea>
         </div>
 
-        <!-- Sign-off (compact) -->
-        <div class="section section-compact">
+        <!-- Sign-off -->
+        <div class="section">
           <div class="section-title">Inspector Sign-Off</div>
           <div class="grid-3">
             <div>
@@ -829,8 +806,8 @@
           </div>
         </div>
 
-        <!-- Party Chief Sign-Off (compact) -->
-        <div class="section section-compact">
+        <!-- Party Chief Sign-Off -->
+        <div class="section">
           <div class="section-title">Party Chief Sign-Off</div>
           <div class="grid-3">
             <div>
