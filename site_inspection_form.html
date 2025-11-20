@@ -284,6 +284,14 @@
       width: 100%;
     }
 
+    /* spacer row to catch page break */
+    .row-spacer td {
+      border: none;
+      background: #ffffff;
+      height: 14px;
+      padding: 0;
+    }
+
     /* Photos */
     .photos-preview {
       display: flex;
@@ -293,7 +301,7 @@
     }
 
     .photos-preview img {
-      max-width: 140px;       /* bigger thumbnails */
+      max-width: 140px;       /* a bit bigger */
       max-height: 140px;
       object-fit: cover;
       border-radius: 10px;
@@ -352,17 +360,6 @@
       font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 2px;
-    }
-
-    /* Try to keep sections and rows together when printing to PDF */
-    .section, table, tr, td, th {
-      page-break-inside: avoid !important;
-      break-inside: avoid !important;
-    }
-
-    .section {
-      page-break-before: auto;
-      page-break-after: auto;
     }
 
     @media (max-width: 720px) {
@@ -633,6 +630,12 @@
                   </div>
                 </td>
               </tr>
+
+              <!-- spacer row to catch the page break -->
+              <tr class="row-spacer">
+                <td colspan="4"></td>
+              </tr>
+
               <tr>
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
                 <td>
@@ -666,25 +669,6 @@
                   <div class="fix-by">
                     <input type="date" name="ppe_footwear_fix_date">
                     <input type="text" name="ppe_footwear_fix_name" placeholder="Name">
-                  </div>
-                </td>
-              </tr>
-              <!-- NEW: Valid safety certificate question -->
-              <tr>
-                <td>Valid safety certificates available and current for workers (e.g., CSTS, First Aid, H2S, TDG)?</td>
-                <td>
-                  <select name="ppe_safety_certs" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
-                  </select>
-                </td>
-                <td><textarea name="ppe_safety_certs_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_safety_certs_fix_date">
-                    <input type="text" name="ppe_safety_certs_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
@@ -775,6 +759,24 @@
                   <div class="fix-by">
                     <input type="date" name="first_aid_kit_fix_date">
                     <input type="text" name="first_aid_kit_fix_name" placeholder="Name">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>Valid safety certificate available?</td>
+                <td>
+                  <select name="valid_safety_certificate" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
+                <td><textarea name="valid_safety_certificate_ca"></textarea></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="valid_safety_certificate_fix_date">
+                    <input type="text" name="valid_safety_certificate_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
@@ -944,20 +946,23 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        const imgWidth = pageWidth;
+        // Slightly smaller than full width to leave some padding
+        const scaleFactor = 0.96;
+        const imgWidth = pageWidth * scaleFactor;
         const imgHeight = canvas.height * imgWidth / canvas.width;
+        const marginX = (pageWidth - imgWidth) / 2;
 
         let heightLeft = imgHeight;
         let position = 0;
 
         // First page(s): screenshot of the form
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', marginX, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
 
         while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          pdf.addImage(imgData, 'PNG', marginX, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
 
