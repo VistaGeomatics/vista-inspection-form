@@ -146,6 +146,11 @@
       overflow: hidden;
     }
 
+    /* Slightly tighter sections (for page 2) */
+    .section-compact {
+      margin-bottom: 16px; /* was 24px */
+    }
+
     /* section banner strip */
     .section::before {
       content: "";
@@ -377,7 +382,7 @@
       }
 
       .header-logo {
-        align-self: flex-end;
+        alignself: flex-end;
         height: 56px;
       }
     }
@@ -579,8 +584,8 @@
           </table>
         </div>
 
-        <!-- PPE Section -->
-        <div class="section">
+        <!-- PPE Section (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
           <p class="section-subtext">Confirm required PPE is available and being used appropriately.</p>
           <table>
@@ -693,8 +698,8 @@
           </table>
         </div>
 
-        <!-- Safety Equipment Section -->
-        <div class="section">
+        <!-- Safety Equipment Section (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Safety Equipment</div>
           <p class="section-subtext">Emergency and first aid equipment checks.</p>
           <table>
@@ -783,8 +788,8 @@
           </table>
         </div>
 
-        <!-- Photos Upload -->
-        <div class="section">
+        <!-- Photos Upload (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Site Photos</div>
           <p class="section-subtext">Attach one or more photos to support your inspection findings.</p>
           <label for="photos">Upload site photos (you can select multiple):</label>
@@ -799,14 +804,14 @@
           <div id="photosPreview" class="photos-preview"></div>
         </div>
 
-        <!-- Notes / Comments -->
-        <div class="section">
+        <!-- Notes / Comments (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Notes / Comments</div>
           <textarea name="notes" placeholder="Additional observations, hazards, corrective actions, or follow-up requirements."></textarea>
         </div>
 
-        <!-- Sign-off -->
-        <div class="section">
+        <!-- Sign-off (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Inspector Sign-Off</div>
           <div class="grid-3">
             <div>
@@ -824,8 +829,8 @@
           </div>
         </div>
 
-        <!-- Party Chief Sign-Off -->
-        <div class="section">
+        <!-- Party Chief Sign-Off (compact) -->
+        <div class="section section-compact">
           <div class="section-title">Party Chief Sign-Off</div>
           <div class="grid-3">
             <div>
