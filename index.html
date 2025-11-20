@@ -144,14 +144,6 @@
       box-shadow: 0 10px 24px rgba(5, 41, 66, 0.05);
       position: relative;
       overflow: hidden;
-
-      /* help PDF page breaks */
-      page-break-inside: avoid;
-    }
-
-    /* also try to keep tables together in PDF */
-    table, tr, td, th {
-      page-break-inside: avoid;
     }
 
     /* section banner strip */
@@ -301,57 +293,16 @@
     }
 
     .photos-preview img {
-      max-width: 120px;
-      max-height: 120px;
+      max-width: 140px;       /* a bit bigger */
+      max-height: 140px;
       object-fit: cover;
       border-radius: 10px;
       border: 1px solid #d1e0f0;
       box-shadow: 0 6px 14px rgba(5, 41, 66, 0.18);
-      cursor: pointer;
     }
 
-    /* Image viewer modal */
-    .image-viewer {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-
-    .image-viewer.open {
-      display: flex;
-    }
-
-    .image-viewer-content {
-      position: relative;
-      max-width: 90%;
-      max-height: 90%;
-    }
-
-    .image-viewer-content img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      background: #000;
-    }
-
-    .image-viewer-close {
-      position: absolute;
-      top: -14px;
-      right: -14px;
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      border: none;
-      font-size: 20px;
-      line-height: 0;
-      cursor: pointer;
-      background: #ffffff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    .photos-preview a {
+      text-decoration: none;
     }
 
     /* Buttons */
@@ -434,6 +385,7 @@
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
+        <!-- Make sure vista-geomatics.png is in the SAME folder as this HTML file -->
         <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
@@ -689,7 +641,7 @@
                 </td>
               </tr>
               <tr>
-                <td>CSA-approved footwear with 8" upper worn when required?</td>
+                <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
                 <td>
                   <select name="ppe_footwear" class="ynna-select">
                     <option value="">--</option>
@@ -796,6 +748,7 @@
                   </div>
                 </td>
               </tr>
+              <!-- NEW ROW: Valid safety certificate -->
               <tr>
                 <td>Valid safety certificate available?</td>
                 <td>
@@ -887,46 +840,51 @@
     </div>
   </div>
 
-  <!-- Image viewer modal (click-to-full-size) -->
-  <div id="imageViewer" class="image-viewer">
-    <div class="image-viewer-content">
-      <button class="image-viewer-close" type="button">&times;</button>
-      <img id="imageViewerImg" src="" alt="Full size preview">
-    </div>
-  </div>
-
   <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // Simple photo preview + click-to-enlarge
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
-    const imageViewer = document.getElementById('imageViewer');
-    const imageViewerImg = document.getElementById('imageViewerImg');
-    const imageViewerClose = document.querySelector('.image-viewer-close');
-
-    function openViewer(src) {
-      imageViewerImg.src = src;
-      imageViewer.classList.add('open');
-    }
-
-    if (imageViewerClose) {
-      imageViewerClose.addEventListener('click', () => {
-        imageViewer.classList.remove('open');
+    // Helper: read a File as data URL (base64)
+    function fileToDataURL(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
       });
     }
 
-    if (imageViewer) {
-      imageViewer.addEventListener('click', (e) => {
-        if (e.target === imageViewer) {
-          imageViewer.classList.remove('open');
-        }
-      });
+    // Helper: compress image (resize + JPEG quality)
+    async function compressImage(file, maxDim = 1600, quality = 0.7) {
+      const baseUrl = await fileToDataURL(file);
+
+      const img = new Image();
+      img.src = baseUrl;
+      await new Promise(res => { img.onload = res; });
+
+      let width = img.width;
+      let height = img.height;
+
+      const scale = Math.min(maxDim / width, maxDim / height, 1);
+      width = width * scale;
+      height = height * scale;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', quality);
+
+      return { dataUrl, width, height };
     }
 
+    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -938,95 +896,92 @@
           reader.onload = e => {
             const img = document.createElement('img');
             img.src = e.target.result;
-            img.alt = file.name;
-            img.addEventListener('click', () => openViewer(img.src));
-            photosPreview.appendChild(img);
+
+            const link = document.createElement('a');
+            link.href = e.target.result;
+            link.target = "_blank";   // open full-size in new tab
+            link.appendChild(img);
+
+            photosPreview.appendChild(link);
           };
           reader.readAsDataURL(file);
         });
       });
     }
 
-    // Helper: read a file as data URL (for PDF images)
-    function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.onerror = err => reject(err);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // Download form as PDF using jsPDF's html() (better page breaks)
+    // Download form as PDF (form screenshot + compressed full-res photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
-      downloadBtn.addEventListener('click', () => {
+      downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
+
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'pt',
+          format: 'a4',
+          compress: true
+        });
+
         const element = document.querySelector('.container');
-        const pdf = new jsPDF('p', 'pt', 'a4');
+
+        window.scrollTo(0, 0);
+
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Function to append uploaded photos as separate pages
-        const appendPhotos = async () => {
-          if (!photosInput || !photosInput.files || photosInput.files.length === 0) {
-            return;
-          }
+        const imgWidth = pageWidth;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
 
-          const files = Array.from(photosInput.files);
+        let heightLeft = imgHeight;
+        let position = 0;
 
-          for (const file of files) {
+        // First page(s): screenshot of the form
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        // Extra pages with COMPRESSED photos
+        if (photosInput && photosInput.files.length > 0) {
+          pdf.addPage();
+          pdf.setFontSize(14);
+          pdf.text("Attached Site Photos", 40, 40);
+
+          let y = 70;
+          const x = 40;
+          const maxWidth = 500;
+          const maxHeight = 350;
+          const pageH = pdf.internal.pageSize.getHeight();
+
+          for (const file of photosInput.files) {
             if (!file.type.startsWith('image/')) continue;
 
-            try {
-              const dataUrl = await readFileAsDataURL(file);
-              const img = new Image();
-              img.src = dataUrl;
+            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
 
-              await new Promise(res => { img.onload = res; });
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            const drawW = width * ratio;
+            const drawH = height * ratio;
 
-              const margin = 40;
-              const maxW = pageWidth - margin * 2;
-              const maxH = pageHeight - margin * 2;
-
-              let w = img.width;
-              let h = img.height;
-
-              const ratio = Math.min(maxW / w, maxH / h, 1);
-              w *= ratio;
-              h *= ratio;
-
+            if (y + drawH > pageH - 40) {
               pdf.addPage();
-              pdf.addImage(
-                dataUrl,
-                'JPEG',
-                (pageWidth - w) / 2,
-                (pageHeight - h) / 2,
-                w,
-                h,
-                undefined,
-                'MEDIUM' // compressed but still readable
-              );
-            } catch (err) {
-              console.error('Error adding photo to PDF:', err);
+              y = 40;
             }
-          }
-        };
 
-        // Use jsPDF html() to handle page breaks more intelligently
-        pdf.html(element, {
-          margin: [20, 20, 20, 20],
-          autoPaging: 'text',
-          html2canvas: {
-            scale: 0.9,
-            useCORS: true
-          },
-          callback: async (pdfResult) => {
-            await appendPhotos();
-            pdfResult.save('Vista-Worksite-Inspection.pdf');
+            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+            y += drawH + 20;
           }
-        });
+        }
+
+        pdf.save('Vista-Worksite-Inspection.pdf');
       });
     }
   </script>
