@@ -293,7 +293,7 @@
     }
 
     .photos-preview img {
-      max-width: 140px;       /* a bit bigger */
+      max-width: 140px;       /* bigger thumbnails */
       max-height: 140px;
       object-fit: cover;
       border-radius: 10px;
@@ -352,6 +352,17 @@
       font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 2px;
+    }
+
+    /* Try to keep sections and rows together when printing to PDF */
+    .section, table, tr, td, th {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+    }
+
+    .section {
+      page-break-before: auto;
+      page-break-after: auto;
     }
 
     @media (max-width: 720px) {
@@ -658,6 +669,25 @@
                   </div>
                 </td>
               </tr>
+              <!-- NEW: Valid safety certificate question -->
+              <tr>
+                <td>Valid safety certificates available and current for workers (e.g., CSTS, First Aid, H2S, TDG)?</td>
+                <td>
+                  <select name="ppe_safety_certs" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
+                <td><textarea name="ppe_safety_certs_ca"></textarea></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="ppe_safety_certs_fix_date">
+                    <input type="text" name="ppe_safety_certs_fix_name" placeholder="Name">
+                  </div>
+                </td>
+              </tr>
               <tr>
                 <td>Hearing protection available and worn if required?</td>
                 <td>
@@ -745,25 +775,6 @@
                   <div class="fix-by">
                     <input type="date" name="first_aid_kit_fix_date">
                     <input type="text" name="first_aid_kit_fix_name" placeholder="Name">
-                  </div>
-                </td>
-              </tr>
-              <!-- NEW ROW: Valid safety certificate -->
-              <tr>
-                <td>Valid safety certificate available?</td>
-                <td>
-                  <select name="safety_certificate" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
-                  </select>
-                </td>
-                <td><textarea name="safety_certificate_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="safety_certificate_fix_date">
-                    <input type="text" name="safety_certificate_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
