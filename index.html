@@ -144,6 +144,14 @@
       box-shadow: 0 10px 24px rgba(5, 41, 66, 0.05);
       position: relative;
       overflow: hidden;
+
+      /* help PDF page breaks */
+      page-break-inside: avoid;
+    }
+
+    /* also try to keep tables together in PDF */
+    table, tr, td, th {
+      page-break-inside: avoid;
     }
 
     /* section banner strip */
@@ -299,6 +307,51 @@
       border-radius: 10px;
       border: 1px solid #d1e0f0;
       box-shadow: 0 6px 14px rgba(5, 41, 66, 0.18);
+      cursor: pointer;
+    }
+
+    /* Image viewer modal */
+    .image-viewer {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .image-viewer.open {
+      display: flex;
+    }
+
+    .image-viewer-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .image-viewer-content img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      background: #000;
+    }
+
+    .image-viewer-close {
+      position: absolute;
+      top: -14px;
+      right: -14px;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: none;
+      font-size: 20px;
+      line-height: 0;
+      cursor: pointer;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
 
     /* Buttons */
@@ -350,11 +403,6 @@
       margin-top: 2px;
     }
 
-    /* Page break helper for PDF */
-    .page-break {
-      page-break-before: always;
-    }
-
     @media (max-width: 720px) {
       body {
         padding: 12px;
@@ -386,7 +434,6 @@
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
-        <!-- Make sure vista-geomatics.png is in the SAME folder as this file -->
         <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
@@ -458,25 +505,6 @@
                   <div class="fix-by">
                     <input type="date" name="ha_reviewed_fix_date">
                     <input type="text" name="ha_reviewed_fix_name" placeholder="Name">
-                  </div>
-                </td>
-              </tr>
-              <!-- NEW ROW: Valid safety certificate -->
-              <tr>
-                <td>Valid safety certificate available?</td>
-                <td>
-                  <select name="safety_cert_valid" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
-                  </select>
-                </td>
-                <td><textarea name="safety_cert_valid_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="safety_cert_valid_fix_date">
-                    <input type="text" name="safety_cert_valid_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
@@ -592,9 +620,6 @@
           </table>
         </div>
 
-        <!-- Page break before PPE in PDF -->
-        <div class="page-break"></div>
-
         <!-- PPE Section -->
         <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
@@ -664,7 +689,7 @@
                 </td>
               </tr>
               <tr>
-                <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
+                <td>CSA-approved footwear with 8" upper worn when required?</td>
                 <td>
                   <select name="ppe_footwear" class="ynna-select">
                     <option value="">--</option>
@@ -702,9 +727,6 @@
             </tbody>
           </table>
         </div>
-
-        <!-- Page break before Safety Equipment -->
-        <div class="page-break"></div>
 
         <!-- Safety Equipment Section -->
         <div class="section">
@@ -744,7 +766,6 @@
                   <select name="fire_ext_service" class="ynna-select">
                     <option value="">--</option>
                     <option>Yes</option>
-
                     <option>No</option>
                     <option>N/A</option>
                   </select>
@@ -775,12 +796,27 @@
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td>Valid safety certificate available?</td>
+                <td>
+                  <select name="safety_certificate" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
+                <td><textarea name="safety_certificate_ca"></textarea></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="safety_certificate_fix_date">
+                    <input type="text" name="safety_certificate_fix_name" placeholder="Name">
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-
-        <!-- Page break before Photos / Notes if you like -->
-        <div class="page-break"></div>
 
         <!-- Photos Upload -->
         <div class="section">
@@ -851,13 +887,45 @@
     </div>
   </div>
 
-  <!-- html2pdf.js (bundles html2canvas + jsPDF) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Image viewer modal (click-to-full-size) -->
+  <div id="imageViewer" class="image-viewer">
+    <div class="image-viewer-content">
+      <button class="image-viewer-close" type="button">&times;</button>
+      <img id="imageViewerImg" src="" alt="Full size preview">
+    </div>
+  </div>
+
+  <!-- PDF Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    // Simple photo preview
+    // Simple photo preview + click-to-enlarge
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
+
+    const imageViewer = document.getElementById('imageViewer');
+    const imageViewerImg = document.getElementById('imageViewerImg');
+    const imageViewerClose = document.querySelector('.image-viewer-close');
+
+    function openViewer(src) {
+      imageViewerImg.src = src;
+      imageViewer.classList.add('open');
+    }
+
+    if (imageViewerClose) {
+      imageViewerClose.addEventListener('click', () => {
+        imageViewer.classList.remove('open');
+      });
+    }
+
+    if (imageViewer) {
+      imageViewer.addEventListener('click', (e) => {
+        if (e.target === imageViewer) {
+          imageViewer.classList.remove('open');
+        }
+      });
+    }
 
     if (photosInput) {
       photosInput.addEventListener('change', function () {
@@ -870,6 +938,8 @@
           reader.onload = e => {
             const img = document.createElement('img');
             img.src = e.target.result;
+            img.alt = file.name;
+            img.addEventListener('click', () => openViewer(img.src));
             photosPreview.appendChild(img);
           };
           reader.readAsDataURL(file);
@@ -877,25 +947,86 @@
       });
     }
 
-    // Download form as PDF using html2pdf.js
+    // Helper: read a file as data URL (for PDF images)
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => resolve(e.target.result);
+        reader.onerror = err => reject(err);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Download form as PDF using jsPDF's html() (better page breaks)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', () => {
+        const { jsPDF } = window.jspdf;
         const element = document.querySelector('.container');
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-        const opt = {
-          margin:       10,
-          filename:     'Vista-Worksite-Inspection.pdf',
-          image:        { type: 'jpeg', quality: 0.9 },        // tweak for size vs quality
-          html2canvas:  { scale: 2, useCORS: true },
-          jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        // Function to append uploaded photos as separate pages
+        const appendPhotos = async () => {
+          if (!photosInput || !photosInput.files || photosInput.files.length === 0) {
+            return;
+          }
+
+          const files = Array.from(photosInput.files);
+
+          for (const file of files) {
+            if (!file.type.startsWith('image/')) continue;
+
+            try {
+              const dataUrl = await readFileAsDataURL(file);
+              const img = new Image();
+              img.src = dataUrl;
+
+              await new Promise(res => { img.onload = res; });
+
+              const margin = 40;
+              const maxW = pageWidth - margin * 2;
+              const maxH = pageHeight - margin * 2;
+
+              let w = img.width;
+              let h = img.height;
+
+              const ratio = Math.min(maxW / w, maxH / h, 1);
+              w *= ratio;
+              h *= ratio;
+
+              pdf.addPage();
+              pdf.addImage(
+                dataUrl,
+                'JPEG',
+                (pageWidth - w) / 2,
+                (pageHeight - h) / 2,
+                w,
+                h,
+                undefined,
+                'MEDIUM' // compressed but still readable
+              );
+            } catch (err) {
+              console.error('Error adding photo to PDF:', err);
+            }
+          }
         };
 
-        // Scroll to top to avoid cropping
-        window.scrollTo(0, 0);
-
-        html2pdf().set(opt).from(element).save();
+        // Use jsPDF html() to handle page breaks more intelligently
+        pdf.html(element, {
+          margin: [20, 20, 20, 20],
+          autoPaging: 'text',
+          html2canvas: {
+            scale: 0.9,
+            useCORS: true
+          },
+          callback: async (pdfResult) => {
+            await appendPhotos();
+            pdfResult.save('Vista-Worksite-Inspection.pdf');
+          }
+        });
       });
     }
   </script>
