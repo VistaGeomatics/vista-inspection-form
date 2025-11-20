@@ -293,16 +293,12 @@
     }
 
     .photos-preview img {
-      max-width: 140px;       /* a bit bigger */
-      max-height: 140px;
+      max-width: 120px;
+      max-height: 120px;
       object-fit: cover;
       border-radius: 10px;
       border: 1px solid #d1e0f0;
       box-shadow: 0 6px 14px rgba(5, 41, 66, 0.18);
-    }
-
-    .photos-preview a {
-      text-decoration: none;
     }
 
     /* Buttons */
@@ -354,6 +350,11 @@
       margin-top: 2px;
     }
 
+    /* Page break helper for PDF */
+    .page-break {
+      page-break-before: always;
+    }
+
     @media (max-width: 720px) {
       body {
         padding: 12px;
@@ -385,7 +386,7 @@
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
-        <!-- Make sure vista-geomatics.png is in the SAME folder as this HTML file -->
+        <!-- Make sure vista-geomatics.png is in the SAME folder as this file -->
         <img src="../vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
@@ -457,6 +458,25 @@
                   <div class="fix-by">
                     <input type="date" name="ha_reviewed_fix_date">
                     <input type="text" name="ha_reviewed_fix_name" placeholder="Name">
+                  </div>
+                </td>
+              </tr>
+              <!-- NEW ROW: Valid safety certificate -->
+              <tr>
+                <td>Valid safety certificate available?</td>
+                <td>
+                  <select name="safety_cert_valid" class="ynna-select">
+                    <option value="">--</option>
+                    <option>Yes</option>
+                    <option>No</option>
+                    <option>N/A</option>
+                  </select>
+                </td>
+                <td><textarea name="safety_cert_valid_ca"></textarea></td>
+                <td>
+                  <div class="fix-by">
+                    <input type="date" name="safety_cert_valid_fix_date">
+                    <input type="text" name="safety_cert_valid_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
@@ -572,6 +592,9 @@
           </table>
         </div>
 
+        <!-- Page break before PPE in PDF -->
+        <div class="page-break"></div>
+
         <!-- PPE Section -->
         <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
@@ -680,6 +703,9 @@
           </table>
         </div>
 
+        <!-- Page break before Safety Equipment -->
+        <div class="page-break"></div>
+
         <!-- Safety Equipment Section -->
         <div class="section">
           <div class="section-title">Safety Equipment</div>
@@ -718,6 +744,7 @@
                   <select name="fire_ext_service" class="ynna-select">
                     <option value="">--</option>
                     <option>Yes</option>
+
                     <option>No</option>
                     <option>N/A</option>
                   </select>
@@ -751,6 +778,9 @@
             </tbody>
           </table>
         </div>
+
+        <!-- Page break before Photos / Notes if you like -->
+        <div class="page-break"></div>
 
         <!-- Photos Upload -->
         <div class="section">
@@ -821,51 +851,14 @@
     </div>
   </div>
 
-  <!-- PDF Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- html2pdf.js (bundles html2canvas + jsPDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <script>
+    // Simple photo preview
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
-    // Helper: read a File as data URL (base64)
-    function fileToDataURL(file) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // Helper: compress image (resize + JPEG quality)
-    async function compressImage(file, maxDim = 1600, quality = 0.7) {
-      const baseUrl = await fileToDataURL(file);
-
-      const img = new Image();
-      img.src = baseUrl;
-      await new Promise(res => { img.onload = res; });
-
-      let width = img.width;
-      let height = img.height;
-
-      const scale = Math.min(maxDim / width, maxDim / height, 1);
-      width = width * scale;
-      height = height * scale;
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const dataUrl = canvas.toDataURL('image/jpeg', quality);
-
-      return { dataUrl, width, height };
-    }
-
-    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -877,92 +870,32 @@
           reader.onload = e => {
             const img = document.createElement('img');
             img.src = e.target.result;
-
-            const link = document.createElement('a');
-            link.href = e.target.result;
-            link.target = "_blank";   // open full-size in new tab
-            link.appendChild(img);
-
-            photosPreview.appendChild(link);
+            photosPreview.appendChild(img);
           };
           reader.readAsDataURL(file);
         });
       });
     }
 
-    // Download form as PDF (form screenshot + compressed full-res photos)
+    // Download form as PDF using html2pdf.js
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
-      downloadBtn.addEventListener('click', async () => {
-        const { jsPDF } = window.jspdf;
-
-        const pdf = new jsPDF({
-          orientation: 'p',
-          unit: 'pt',
-          format: 'a4',
-          compress: true
-        });
-
+      downloadBtn.addEventListener('click', () => {
         const element = document.querySelector('.container');
 
+        const opt = {
+          margin:       10,
+          filename:     'Vista-Worksite-Inspection.pdf',
+          image:        { type: 'jpeg', quality: 0.9 },        // tweak for size vs quality
+          html2canvas:  { scale: 2, useCORS: true },
+          jsPDF:        { unit: 'pt', format: 'a4', orientation: 'portrait' }
+        };
+
+        // Scroll to top to avoid cropping
         window.scrollTo(0, 0);
 
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
-
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        const imgWidth = pageWidth;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-
-        let heightLeft = imgHeight;
-        let position = 0;
-
-        // First page(s): screenshot of the form
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
-        }
-
-        // Extra pages with COMPRESSED photos
-        if (photosInput && photosInput.files.length > 0) {
-          pdf.addPage();
-          pdf.setFontSize(14);
-          pdf.text("Attached Site Photos", 40, 40);
-
-          let y = 70;
-          const x = 40;
-          const maxWidth = 500;
-          const maxHeight = 350;
-          const pageH = pdf.internal.pageSize.getHeight();
-
-          for (const file of photosInput.files) {
-            if (!file.type.startsWith('image/')) continue;
-
-            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
-
-            const ratio = Math.min(maxWidth / width, maxHeight / height);
-            const drawW = width * ratio;
-            const drawH = height * ratio;
-
-            if (y + drawH > pageH - 40) {
-              pdf.addPage();
-              y = 40;
-            }
-
-            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
-            y += drawH + 20;
-          }
-        }
-
-        pdf.save('Vista-Worksite-Inspection.pdf');
+        html2pdf().set(opt).from(element).save();
       });
     }
   </script>
