@@ -74,7 +74,6 @@
       overflow: hidden;
     }
 
-    /* subtle diagonal lines */
     .header-bar::after {
       content: "";
       position: absolute;
@@ -146,7 +145,6 @@
       overflow: hidden;
     }
 
-    /* section banner strip */
     .section::before {
       content: "";
       position: absolute;
@@ -231,7 +229,6 @@
       resize: vertical;
     }
 
-    /* Fix By: Date + Name layout */
     .fix-by {
       display: flex;
       gap: 6px;
@@ -239,14 +236,13 @@
     }
 
     .fix-by input[type="date"] {
-      flex: 0 0 130px; /* date width */
+      flex: 0 0 130px;
     }
 
     .fix-by input[type="text"] {
       flex: 1;
     }
 
-    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -284,15 +280,6 @@
       width: 100%;
     }
 
-    /* spacer row to catch page break */
-    .row-spacer td {
-      border: none;
-      background: #ffffff;
-      height: 14px;
-      padding: 0;
-    }
-
-    /* Photos */
     .photos-preview {
       display: flex;
       flex-wrap: wrap;
@@ -301,7 +288,7 @@
     }
 
     .photos-preview img {
-      max-width: 140px;       /* a bit bigger */
+      max-width: 140px;
       max-height: 140px;
       object-fit: cover;
       border-radius: 10px;
@@ -313,7 +300,6 @@
       text-decoration: none;
     }
 
-    /* Buttons */
     .btn-row {
       margin-top: 26px;
       display: flex;
@@ -630,12 +616,6 @@
                   </div>
                 </td>
               </tr>
-
-              <!-- spacer row to catch the page break -->
-              <tr class="row-spacer">
-                <td colspan="4"></td>
-              </tr>
-
               <tr>
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
                 <td>
@@ -654,6 +634,12 @@
                   </div>
                 </td>
               </tr>
+
+              <!-- NEW: blank spacer row to soak up the page break -->
+              <tr>
+                <td colspan="4" style="height:32px;border:none;background:transparent;"></td>
+              </tr>
+
               <tr>
                 <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
                 <td>
@@ -765,18 +751,18 @@
               <tr>
                 <td>Valid safety certificate available?</td>
                 <td>
-                  <select name="valid_safety_certificate" class="ynna-select">
+                  <select name="safety_certificate" class="ynna-select">
                     <option value="">--</option>
                     <option>Yes</option>
                     <option>No</option>
                     <option>N/A</option>
                   </select>
                 </td>
-                <td><textarea name="valid_safety_certificate_ca"></textarea></td>
+                <td><textarea name="safety_certificate_ca"></textarea></td>
                 <td>
                   <div class="fix-by">
-                    <input type="date" name="valid_safety_certificate_fix_date">
-                    <input type="text" name="valid_safety_certificate_fix_name" placeholder="Name">
+                    <input type="date" name="safety_certificate_fix_date">
+                    <input type="text" name="safety_certificate_fix_name" placeholder="Name">
                   </div>
                 </td>
               </tr>
@@ -861,7 +847,6 @@
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
-    // Helper: read a File as data URL (base64)
     function fileToDataURL(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -870,7 +855,6 @@
       });
     }
 
-    // Helper: compress image (resize + JPEG quality)
     async function compressImage(file, maxDim = 1600, quality = 0.7) {
       const baseUrl = await fileToDataURL(file);
 
@@ -897,7 +881,6 @@
       return { dataUrl, width, height };
     }
 
-    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -912,7 +895,7 @@
 
             const link = document.createElement('a');
             link.href = e.target.result;
-            link.target = "_blank";   // open full-size in new tab
+            link.target = "_blank";
             link.appendChild(img);
 
             photosPreview.appendChild(link);
@@ -922,7 +905,6 @@
       });
     }
 
-    // Download form as PDF (form screenshot + compressed full-res photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
@@ -946,27 +928,22 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Slightly smaller than full width to leave some padding
-        const scaleFactor = 0.96;
-        const imgWidth = pageWidth * scaleFactor;
+        const imgWidth = pageWidth;
         const imgHeight = canvas.height * imgWidth / canvas.width;
-        const marginX = (pageWidth - imgWidth) / 2;
 
         let heightLeft = imgHeight;
         let position = 0;
 
-        // First page(s): screenshot of the form
-        pdf.addImage(imgData, 'PNG', marginX, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
 
         while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
-          pdf.addImage(imgData, 'PNG', marginX, position, imgWidth, imgHeight);
+          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
         }
 
-        // Extra pages with COMPRESSED photos
         if (photosInput && photosInput.files.length > 0) {
           pdf.addPage();
           pdf.setFontSize(14);
