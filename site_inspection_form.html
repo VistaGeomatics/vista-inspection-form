@@ -74,6 +74,7 @@
       overflow: hidden;
     }
 
+    /* subtle diagonal lines */
     .header-bar::after {
       content: "";
       position: absolute;
@@ -145,6 +146,7 @@
       overflow: hidden;
     }
 
+    /* section banner strip */
     .section::before {
       content: "";
       position: absolute;
@@ -229,6 +231,7 @@
       resize: vertical;
     }
 
+    /* Fix By: Date + Name layout */
     .fix-by {
       display: flex;
       gap: 6px;
@@ -243,6 +246,7 @@
       flex: 1;
     }
 
+    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -280,6 +284,14 @@
       width: 100%;
     }
 
+    /* Spacer row to align page break nicely */
+    .page-spacer-row td {
+      padding: 30px 10px;
+      border: none;
+      background: transparent;
+    }
+
+    /* Photos */
     .photos-preview {
       display: flex;
       flex-wrap: wrap;
@@ -300,6 +312,7 @@
       text-decoration: none;
     }
 
+    /* Buttons */
     .btn-row {
       margin-top: 26px;
       display: flex;
@@ -432,7 +445,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ha_completed_fix_date">
-                    <input type="text" name="ha_completed_fix_name" placeholder="Name">
+                    <input type="text" name="ha_completed_fix_name">
                   </div>
                 </td>
               </tr>
@@ -450,7 +463,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ha_reviewed_fix_date">
-                    <input type="text" name="ha_reviewed_fix_name" placeholder="Name">
+                    <input type="text" name="ha_reviewed_fix_name">
                   </div>
                 </td>
               </tr>
@@ -468,7 +481,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="erp_effective_fix_date">
-                    <input type="text" name="erp_effective_fix_name" placeholder="Name">
+                    <input type="text" name="erp_effective_fix_name">
                   </div>
                 </td>
               </tr>
@@ -486,7 +499,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="swp_used_fix_date">
-                    <input type="text" name="swp_used_fix_name" placeholder="Name">
+                    <input type="text" name="swp_used_fix_name">
                   </div>
                 </td>
               </tr>
@@ -504,7 +517,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="road_signs_fix_date">
-                    <input type="text" name="road_signs_fix_name" placeholder="Name">
+                    <input type="text" name="road_signs_fix_name">
                   </div>
                 </td>
               </tr>
@@ -522,7 +535,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="vehicle_clean_fix_date">
-                    <input type="text" name="vehicle_clean_fix_name" placeholder="Name">
+                    <input type="text" name="vehicle_clean_fix_name">
                   </div>
                 </td>
               </tr>
@@ -540,7 +553,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="vista_sign_fix_date">
-                    <input type="text" name="vista_sign_fix_name" placeholder="Name">
+                    <input type="text" name="vista_sign_fix_name">
                   </div>
                 </td>
               </tr>
@@ -558,7 +571,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="clean_site_fix_date">
-                    <input type="text" name="clean_site_fix_name" placeholder="Name">
+                    <input type="text" name="clean_site_fix_name">
                   </div>
                 </td>
               </tr>
@@ -594,7 +607,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ppe_hard_hat_fix_date">
-                    <input type="text" name="ppe_hard_hat_fix_name" placeholder="Name">
+                    <input type="text" name="ppe_hard_hat_fix_name">
                   </div>
                 </td>
               </tr>
@@ -612,7 +625,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ppe_eye_fix_date">
-                    <input type="text" name="ppe_eye_fix_name" placeholder="Name">
+                    <input type="text" name="ppe_eye_fix_name">
                   </div>
                 </td>
               </tr>
@@ -630,14 +643,14 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ppe_clothing_fix_date">
-                    <input type="text" name="ppe_clothing_fix_name" placeholder="Name">
+                    <input type="text" name="ppe_clothing_fix_name">
                   </div>
                 </td>
               </tr>
 
-              <!-- BLANK SPACER ROW to catch the page break -->
-              <tr>
-                <td colspan="4" style="height:80px;border:none;background:transparent;"></td>
+              <!-- Spacer row so the PDF page break hits cleanly here -->
+              <tr class="page-spacer-row">
+                <td colspan="4"></td>
               </tr>
 
               <tr>
@@ -654,7 +667,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ppe_footwear_fix_date">
-                    <input type="text" name="ppe_footwear_fix_name" placeholder="Name">
+                    <input type="text" name="ppe_footwear_fix_name">
                   </div>
                 </td>
               </tr>
@@ -672,7 +685,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="ppe_hearing_fix_date">
-                    <input type="text" name="ppe_hearing_fix_name" placeholder="Name">
+                    <input type="text" name="ppe_hearing_fix_name">
                   </div>
                 </td>
               </tr>
@@ -708,7 +721,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="fire_ext_in_place_fix_date">
-                    <input type="text" name="fire_ext_in_place_fix_name" placeholder="Name">
+                    <input type="text" name="fire_ext_in_place_fix_name">
                   </div>
                 </td>
               </tr>
@@ -726,7 +739,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="fire_ext_service_fix_date">
-                    <input type="text" name="fire_ext_service_fix_name" placeholder="Name">
+                    <input type="text" name="fire_ext_service_fix_name">
                   </div>
                 </td>
               </tr>
@@ -744,7 +757,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="first_aid_kit_fix_date">
-                    <input type="text" name="first_aid_kit_fix_name" placeholder="Name">
+                    <input type="text" name="first_aid_kit_fix_name">
                   </div>
                 </td>
               </tr>
@@ -762,7 +775,7 @@
                 <td>
                   <div class="fix-by">
                     <input type="date" name="safety_certificate_fix_date">
-                    <input type="text" name="safety_certificate_fix_name" placeholder="Name">
+                    <input type="text" name="safety_certificate_fix_name">
                   </div>
                 </td>
               </tr>
@@ -908,96 +921,82 @@
       });
     }
 
-    // Download form as PDF (form screenshot + compressed photos)
+    // Download form as PDF (form screenshot + compressed full-res photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        // Temporarily remove placeholder text so it doesn't show in the PDF
-        const placeholderElements = Array.from(
-          document.querySelectorAll('input[placeholder], textarea[placeholder]')
-        );
-        const originalPlaceholders = placeholderElements.map(el => el.getAttribute('placeholder') || '');
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'pt',
+          format: 'a4',
+          compress: true
+        });
 
-        placeholderElements.forEach(el => el.setAttribute('placeholder', ''));
+        const element = document.querySelector('.container');
 
-        try {
-          const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'pt',
-            format: 'a4',
-            compress: true
-          });
+        window.scrollTo(0, 0);
 
-          const element = document.querySelector('.container');
+        const canvas = await html2canvas(element, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
 
-          // Scroll to top to avoid weird cropping
-          window.scrollTo(0, 0);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-          // Take a high-res screenshot of the container
-          const canvas = await html2canvas(element, { scale: 2 });
-          const imgData = canvas.toDataURL('image/png');
+        // Slightly shrink overall image so fewer pages are needed
+        const scaleFactor = 0.97;
+        const imgWidth = pageWidth * scaleFactor;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+        const xOffset = (pageWidth - imgWidth) / 2;
 
-          const pageWidth = pdf.internal.pageSize.getWidth();
-          const pageHeight = pdf.internal.pageSize.getHeight();
+        let heightLeft = imgHeight;
+        let position = 0;
 
-          const imgWidth = pageWidth;
-          const imgHeight = canvas.height * imgWidth / canvas.width;
+        // First page(s): screenshot of the form
+        pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
 
-          let heightLeft = imgHeight;
-          let position = 0;
-
-          // First page(s): screenshot of the form
-          pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
-
-          while (heightLeft > 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
-
-          // Extra pages with COMPRESSED photos
-          if (photosInput && photosInput.files.length > 0) {
-            pdf.addPage();
-            pdf.setFontSize(14);
-            pdf.text("Attached Site Photos", 40, 40);
-
-            let y = 70;
-            const x = 40;
-            const maxWidth = 500;
-            const maxHeight = 350;
-            const pageH = pdf.internal.pageSize.getHeight();
-
-            for (const file of photosInput.files) {
-              if (!file.type.startsWith('image/')) continue;
-
-              const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
-
-              const ratio = Math.min(maxWidth / width, maxHeight / height);
-              const drawW = width * ratio;
-              const drawH = height * ratio;
-
-              if (y + drawH > pageH - 40) {
-                pdf.addPage();
-                y = 40;
-              }
-
-              pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
-              y += drawH + 20;
-            }
-          }
-
-          pdf.save('Vista-Worksite-Inspection.pdf');
-        } finally {
-          // Restore placeholders after the PDF is generated
-          placeholderElements.forEach((el, idx) => {
-            el.setAttribute('placeholder', originalPlaceholders[idx]);
-          });
         }
+
+        // Extra pages with COMPRESSED photos
+        if (photosInput && photosInput.files.length > 0) {
+          pdf.addPage();
+          pdf.setFontSize(14);
+          pdf.text("Attached Site Photos", 40, 40);
+
+          let y = 70;
+          const x = 40;
+          const maxWidth = 500;
+          const maxHeight = 350;
+          const pageH = pdf.internal.pageSize.getHeight();
+
+          for (const file of photosInput.files) {
+            if (!file.type.startsWith('image/')) continue;
+
+            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
+
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            const drawW = width * ratio;
+            const drawH = height * ratio;
+
+            if (y + drawH > pageH - 40) {
+              pdf.addPage();
+              y = 40;
+            }
+
+            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+            y += drawH + 20;
+          }
+        }
+
+        pdf.save('Vista-Worksite-Inspection.pdf');
       });
     }
   </script>
