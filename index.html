@@ -236,7 +236,7 @@
     }
 
     .fix-by input[type="date"] {
-      flex: 0 0 130px;
+      flex: 0 0 130px; /* date width */
     }
 
     .fix-by input[type="text"] {
@@ -635,9 +635,9 @@
                 </td>
               </tr>
 
-              <!-- NEW: blank spacer row to soak up the page break -->
+              <!-- BLANK SPACER ROW to catch the page break -->
               <tr>
-                <td colspan="4" style="height:32px;border:none;background:transparent;"></td>
+                <td colspan="4" style="height:80px;border:none;background:transparent;"></td>
               </tr>
 
               <tr>
@@ -847,6 +847,7 @@
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
+    // Helper: read a File as data URL (base64)
     function fileToDataURL(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -855,6 +856,7 @@
       });
     }
 
+    // Helper: compress image (resize + JPEG quality)
     async function compressImage(file, maxDim = 1600, quality = 0.7) {
       const baseUrl = await fileToDataURL(file);
 
@@ -881,6 +883,7 @@
       return { dataUrl, width, height };
     }
 
+    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -895,7 +898,7 @@
 
             const link = document.createElement('a');
             link.href = e.target.result;
-            link.target = "_blank";
+            link.target = "_blank";   // open full-size in new tab
             link.appendChild(img);
 
             photosPreview.appendChild(link);
@@ -905,76 +908,96 @@
       });
     }
 
+    // Download form as PDF (form screenshot + compressed photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        const pdf = new jsPDF({
-          orientation: 'p',
-          unit: 'pt',
-          format: 'a4',
-          compress: true
-        });
+        // Temporarily remove placeholder text so it doesn't show in the PDF
+        const placeholderElements = Array.from(
+          document.querySelectorAll('input[placeholder], textarea[placeholder]')
+        );
+        const originalPlaceholders = placeholderElements.map(el => el.getAttribute('placeholder') || '');
 
-        const element = document.querySelector('.container');
+        placeholderElements.forEach(el => el.setAttribute('placeholder', ''));
 
-        window.scrollTo(0, 0);
+        try {
+          const pdf = new jsPDF({
+            orientation: 'p',
+            unit: 'pt',
+            format: 'a4',
+            compress: true
+          });
 
-        const canvas = await html2canvas(element, { scale: 2 });
-        const imgData = canvas.toDataURL('image/png');
+          const element = document.querySelector('.container');
 
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
+          // Scroll to top to avoid weird cropping
+          window.scrollTo(0, 0);
 
-        const imgWidth = pageWidth;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
+          // Take a high-res screenshot of the container
+          const canvas = await html2canvas(element, { scale: 2 });
+          const imgData = canvas.toDataURL('image/png');
 
-        let heightLeft = imgHeight;
-        let position = 0;
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
 
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+          const imgWidth = pageWidth;
+          const imgHeight = canvas.height * imgWidth / canvas.width;
 
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
+          let heightLeft = imgHeight;
+          let position = 0;
+
+          // First page(s): screenshot of the form
           pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
           heightLeft -= pageHeight;
-        }
 
-        if (photosInput && photosInput.files.length > 0) {
-          pdf.addPage();
-          pdf.setFontSize(14);
-          pdf.text("Attached Site Photos", 40, 40);
-
-          let y = 70;
-          const x = 40;
-          const maxWidth = 500;
-          const maxHeight = 350;
-          const pageH = pdf.internal.pageSize.getHeight();
-
-          for (const file of photosInput.files) {
-            if (!file.type.startsWith('image/')) continue;
-
-            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
-
-            const ratio = Math.min(maxWidth / width, maxHeight / height);
-            const drawW = width * ratio;
-            const drawH = height * ratio;
-
-            if (y + drawH > pageH - 40) {
-              pdf.addPage();
-              y = 40;
-            }
-
-            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
-            y += drawH + 20;
+          while (heightLeft > 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
           }
-        }
 
-        pdf.save('Vista-Worksite-Inspection.pdf');
+          // Extra pages with COMPRESSED photos
+          if (photosInput && photosInput.files.length > 0) {
+            pdf.addPage();
+            pdf.setFontSize(14);
+            pdf.text("Attached Site Photos", 40, 40);
+
+            let y = 70;
+            const x = 40;
+            const maxWidth = 500;
+            const maxHeight = 350;
+            const pageH = pdf.internal.pageSize.getHeight();
+
+            for (const file of photosInput.files) {
+              if (!file.type.startsWith('image/')) continue;
+
+              const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
+
+              const ratio = Math.min(maxWidth / width, maxHeight / height);
+              const drawW = width * ratio;
+              const drawH = height * ratio;
+
+              if (y + drawH > pageH - 40) {
+                pdf.addPage();
+                y = 40;
+              }
+
+              pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+              y += drawH + 20;
+            }
+          }
+
+          pdf.save('Vista-Worksite-Inspection.pdf');
+        } finally {
+          // Restore placeholders after the PDF is generated
+          placeholderElements.forEach((el, idx) => {
+            el.setAttribute('placeholder', originalPlaceholders[idx]);
+          });
+        }
       });
     }
   </script>
