@@ -10,9 +10,9 @@
 
   <style>
     :root {
-      --vista-blue: #165f7d;        /* main Vista blue */
-      --vista-blue-light: #2a7fa3;  /* lighter blue */
-      --vista-blue-dark: #0b3045;   /* darker blue */
+      --vista-blue: #165f7d;
+      --vista-blue-light: #2a7fa3;
+      --vista-blue-dark: #0b3045;
 
       --bg-body: #eef3f9;
       --bg-card: #ffffff;
@@ -22,11 +22,13 @@
       --border-soft: #d6e2f0;
       --text-main: #101827;
       --text-muted: #6b7280;
+
+      /* PDF helpers */
+      --pdf-gap: 110px; /* whitespace target for a nicer page split */
+      --pdf-side-pad: 24px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -36,10 +38,7 @@
       color: var(--text-main);
     }
 
-    .page-wrap {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    .page-wrap { max-width: 1200px; margin: 0 auto; }
 
     .container {
       background: var(--bg-card);
@@ -51,7 +50,6 @@
       position: relative;
     }
 
-    /* Decorative top glow */
     .container::before {
       content: "";
       position: absolute;
@@ -61,7 +59,6 @@
       opacity: 0.9;
     }
 
-    /* Header */
     .header-bar {
       position: relative;
       z-index: 1;
@@ -74,16 +71,11 @@
       overflow: hidden;
     }
 
-    /* subtle diagonal lines */
     .header-bar::after {
       content: "";
       position: absolute;
       inset: -40%;
-      background-image: linear-gradient(
-        135deg,
-        rgba(255,255,255,0.07) 0,
-        transparent 40%
-      );
+      background-image: linear-gradient(135deg, rgba(255,255,255,0.07) 0, transparent 40%);
       opacity: 0.45;
       pointer-events: none;
     }
@@ -102,16 +94,12 @@
       text-transform: uppercase;
       margin: 0;
       font-family: "Montserrat", sans-serif;
-      font-weight: 400; /* base */
+      font-weight: 400;
+      line-height: 1.1;
     }
 
-    .vista-bold {
-      font-weight: 700; /* VISTA bold */
-    }
-
-    .geomatics-regular {
-      font-weight: 400; /* GEOMATICS regular */
-    }
+    .vista-bold { font-weight: 700; }
+    .geomatics-regular { font-weight: 400; }
 
     .header-left p {
       margin: 0;
@@ -127,11 +115,10 @@
       filter: drop-shadow(0 6px 16px rgba(0,0,0,0.35));
     }
 
-    /* Form body */
     form {
       position: relative;
       z-index: 2;
-      padding: 24px 28px 26px;
+      padding: 24px 28px 18px;
       background: radial-gradient(circle at top left, rgba(226,240,246,0.55), transparent 55%) #ffffff;
     }
 
@@ -146,13 +133,10 @@
       overflow: hidden;
     }
 
-    /* section banner strip */
     .section::before {
       content: "";
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 5px;
       background: linear-gradient(90deg, var(--vista-blue-light), var(--vista-blue-dark));
     }
@@ -226,27 +210,16 @@
       transform: translateY(-1px);
     }
 
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-    }
+    textarea { min-height: 80px; resize: vertical; }
 
-    /* Fix By: Date + Name layout */
     .fix-by {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
     }
+    .fix-by input[type="date"] { flex: 0 0 130px; }
+    .fix-by input[type="text"] { flex: 1; }
 
-    .fix-by input[type="date"] {
-      flex: 0 0 130px; /* date width */
-    }
-
-    .fix-by input[type="text"] {
-      flex: 1;
-    }
-
-    /* Tables */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -271,20 +244,12 @@
       color: #4b5563;
     }
 
-    tbody tr:nth-child(even) {
-      background: #f7faff;
-    }
+    tbody tr:nth-child(even) { background: #f7faff; }
+    tbody tr:hover { background: #edf4ff; transition: background 0.15s ease; }
 
-    tbody tr:hover {
-      background: #edf4ff;
-      transition: background 0.15s ease;
-    }
+    .ynna-select { width: 100%; }
 
-    .ynna-select {
-      width: 100%;
-    }
-
-    /* Spacer row to align page break nicely */
+    /* Existing spacer row (kept) */
     .page-spacer-row td {
       padding: 30px 10px;
       border: none;
@@ -308,9 +273,7 @@
       box-shadow: 0 6px 14px rgba(5, 41, 66, 0.18);
     }
 
-    .photos-preview a {
-      text-decoration: none;
-    }
+    .photos-preview a { text-decoration: none; }
 
     /* Buttons */
     .btn-row {
@@ -361,43 +324,58 @@
       margin-top: 2px;
     }
 
-    @media (max-width: 720px) {
-      body {
-        padding: 12px;
-      }
+    /* PDF-only page-break “gap” (hidden during normal use) */
+    .pdf-break-gap {
+      display: none;
+      height: var(--pdf-gap);
+      border-radius: 12px;
+      background: transparent;
+    }
+    body.exporting .pdf-break-gap { display: block; }
 
-      form {
-        padding: 18px 16px 20px;
-      }
+    /* Version footer */
+    .version-footer {
+      margin-top: 16px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(214,226,240,0.9);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .version-footer .left { opacity: 0.9; }
+    .version-footer .right { font-weight: 600; color: rgba(11,48,69,0.8); }
+
+    @media (max-width: 720px) {
+      body { padding: 12px; }
+      form { padding: 18px 16px 20px; }
 
       .header-bar {
         flex-direction: column;
         align-items: flex-start;
         gap: 10px;
       }
-
       .header-logo {
         align-self: flex-end;
         height: 56px;
       }
+      .version-footer { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
 <body>
   <div class="page-wrap">
     <div class="container">
-      <!-- Header -->
       <div class="header-bar">
         <div class="header-left">
           <h1><span class="vista-bold">VISTA</span><span class="geomatics-regular">GEOMATICS</span></h1>
           <p>Worksite Inspection Form</p>
         </div>
-        <!-- Make sure vista-geomatics.png is in the SAME folder as this HTML file -->
         <img src="vista-geomatics.png" alt="Vista Geomatics Logo" class="header-logo">
       </div>
 
       <form action="#" method="post" enctype="multipart/form-data">
-        <!-- Basic Info -->
         <div class="section">
           <div class="section-title">General Information</div>
           <p class="section-subtext">Basic project and site details for this inspection.</p>
@@ -417,7 +395,6 @@
           </div>
         </div>
 
-        <!-- Worksite Inspection - Site Conditions / Admin -->
         <div class="section">
           <div class="section-title">Worksite Inspection – Site Conditions / Administration</div>
           <p class="section-subtext">Administrative controls, documentation, and general housekeeping.</p>
@@ -442,12 +419,7 @@
                   </select>
                 </td>
                 <td><textarea name="ha_completed_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ha_completed_fix_date">
-                    <input type="text" name="ha_completed_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ha_completed_fix_date"><input type="text" name="ha_completed_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Hazard assessment reviewed and signed by all workers on site?</td>
@@ -460,12 +432,7 @@
                   </select>
                 </td>
                 <td><textarea name="ha_reviewed_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ha_reviewed_fix_date">
-                    <input type="text" name="ha_reviewed_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ha_reviewed_fix_date"><input type="text" name="ha_reviewed_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Effective Emergency Response Plan developed with emergency numbers?</td>
@@ -478,12 +445,7 @@
                   </select>
                 </td>
                 <td><textarea name="erp_effective_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="erp_effective_fix_date">
-                    <input type="text" name="erp_effective_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="erp_effective_fix_date"><input type="text" name="erp_effective_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Safe work practices and safe job procedures being used?</td>
@@ -496,12 +458,7 @@
                   </select>
                 </td>
                 <td><textarea name="swp_used_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="swp_used_fix_date">
-                    <input type="text" name="swp_used_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="swp_used_fix_date"><input type="text" name="swp_used_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Road signs, pylons available and used as required?</td>
@@ -514,12 +471,7 @@
                   </select>
                 </td>
                 <td><textarea name="road_signs_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="road_signs_fix_date">
-                    <input type="text" name="road_signs_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="road_signs_fix_date"><input type="text" name="road_signs_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Work vehicle reasonably clean?</td>
@@ -532,12 +484,7 @@
                   </select>
                 </td>
                 <td><textarea name="vehicle_clean_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="vehicle_clean_fix_date">
-                    <input type="text" name="vehicle_clean_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="vehicle_clean_fix_date"><input type="text" name="vehicle_clean_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Vista sign displayed on the truck? (ALS regulation)</td>
@@ -550,12 +497,7 @@
                   </select>
                 </td>
                 <td><textarea name="vista_sign_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="vista_sign_fix_date">
-                    <input type="text" name="vista_sign_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="vista_sign_fix_date"><input type="text" name="vista_sign_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Clean and tidy work site?</td>
@@ -568,18 +510,12 @@
                   </select>
                 </td>
                 <td><textarea name="clean_site_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="clean_site_fix_date">
-                    <input type="text" name="clean_site_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="clean_site_fix_date"><input type="text" name="clean_site_fix_name"></div></td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- PPE Section -->
         <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
           <p class="section-subtext">Confirm required PPE is available and being used appropriately.</p>
@@ -604,12 +540,7 @@
                   </select>
                 </td>
                 <td><textarea name="ppe_hard_hat_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_hard_hat_fix_date">
-                    <input type="text" name="ppe_hard_hat_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ppe_hard_hat_fix_date"><input type="text" name="ppe_hard_hat_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Safety glasses or eye protection worn when required?</td>
@@ -622,15 +553,10 @@
                   </select>
                 </td>
                 <td><textarea name="ppe_eye_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_eye_fix_date">
-                    <input type="text" name="ppe_eye_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name"></div></td>
               </tr>
 
-              <!-- Spacer row so the PDF page break hits cleanly ABOVE Protective Clothing -->
+              <!-- Existing spacer row (kept) -->
               <tr class="page-spacer-row">
                 <td colspan="4" style="padding: 66px; border: none; background: transparent;"></td>
               </tr>
@@ -646,12 +572,7 @@
                   </select>
                 </td>
                 <td><textarea name="ppe_clothing_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_clothing_fix_date">
-                    <input type="text" name="ppe_clothing_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ppe_clothing_fix_date"><input type="text" name="ppe_clothing_fix_name"></div></td>
               </tr>
               <tr>
                 <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
@@ -664,12 +585,7 @@
                   </select>
                 </td>
                 <td><textarea name="ppe_footwear_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_footwear_fix_date">
-                    <input type="text" name="ppe_footwear_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ppe_footwear_fix_date"><input type="text" name="ppe_footwear_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Hearing protection available and worn if required?</td>
@@ -682,18 +598,15 @@
                   </select>
                 </td>
                 <td><textarea name="ppe_hearing_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="ppe_hearing_fix_date">
-                    <input type="text" name="ppe_hearing_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="ppe_hearing_fix_date"><input type="text" name="ppe_hearing_fix_name"></div></td>
               </tr>
             </tbody>
           </table>
+
+          <!-- PDF-only gap to encourage a clean page slice -->
+          <div class="pdf-break-gap"></div>
         </div>
 
-        <!-- Safety Equipment Section -->
         <div class="section">
           <div class="section-title">Safety Equipment</div>
           <p class="section-subtext">Emergency and first aid equipment checks.</p>
@@ -718,12 +631,7 @@
                   </select>
                 </td>
                 <td><textarea name="fire_ext_all_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="fire_ext_all_fix_date">
-                    <input type="text" name="fire_ext_all_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="fire_ext_all_fix_date"><input type="text" name="fire_ext_all_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Alberta Level 2 first aid kit available and complete?</td>
@@ -736,12 +644,7 @@
                   </select>
                 </td>
                 <td><textarea name="first_aid_kit_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="first_aid_kit_fix_date">
-                    <input type="text" name="first_aid_kit_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="first_aid_kit_fix_date"><input type="text" name="first_aid_kit_fix_name"></div></td>
               </tr>
               <tr>
                 <td>Valid safety certificate available?</td>
@@ -754,40 +657,26 @@
                   </select>
                 </td>
                 <td><textarea name="safety_certificate_ca"></textarea></td>
-                <td>
-                  <div class="fix-by">
-                    <input type="date" name="safety_certificate_fix_date">
-                    <input type="text" name="safety_certificate_fix_name">
-                  </div>
-                </td>
+                <td><div class="fix-by"><input type="date" name="safety_certificate_fix_date"><input type="text" name="safety_certificate_fix_name"></div></td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Photos Upload -->
         <div class="section">
           <div class="section-title">Site Photos</div>
           <p class="section-subtext">Attach one or more photos to support your inspection findings.</p>
           <label for="photos">Upload site photos (you can select multiple):</label>
-          <input
-            type="file"
-            id="photos"
-            name="photos[]"
-            accept="image/*"
-            multiple
-          >
+          <input type="file" id="photos" name="photos[]" accept="image/*" multiple>
           <p class="hint">Accepted: JPG, PNG, HEIC. Large files may take longer to upload.</p>
           <div id="photosPreview" class="photos-preview"></div>
         </div>
 
-        <!-- Notes / Comments -->
         <div class="section">
           <div class="section-title">Notes / Comments</div>
           <textarea name="notes" placeholder="Additional observations, hazards, corrective actions, or follow-up requirements."></textarea>
         </div>
 
-        <!-- Sign-off -->
         <div class="section">
           <div class="section-title">Inspector Sign-Off</div>
           <div class="grid-3">
@@ -806,7 +695,6 @@
           </div>
         </div>
 
-        <!-- Party Chief Sign-Off -->
         <div class="section">
           <div class="section-title">Party Chief Sign-Off</div>
           <div class="grid-3">
@@ -825,10 +713,15 @@
           </div>
         </div>
 
-        <!-- Buttons -->
         <div class="btn-row">
           <button type="reset" class="btn-secondary">Reset</button>
           <button type="button" id="downloadPdfBtn" class="btn-primary">Download PDF</button>
+        </div>
+
+        <!-- Version footer -->
+        <div class="version-footer" aria-label="document version">
+          <div class="left">Vista Geomatics, Worksite Inspection Form</div>
+          <div class="right">v1.1</div>
         </div>
       </form>
     </div>
@@ -839,10 +732,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
+    const VERSION = "v1.1";
+
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
 
-    // Helper: read a File as data URL (base64)
     function fileToDataURL(file) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -851,8 +745,7 @@
       });
     }
 
-    // Helper: compress image (resize + JPEG quality)
-    async function compressImage(file, maxDim = 1600, quality = 0.7) {
+    async function compressImage(file, maxDim = 1600, quality = 0.75) {
       const baseUrl = await fileToDataURL(file);
 
       const img = new Image();
@@ -863,8 +756,8 @@
       let height = img.height;
 
       const scale = Math.min(maxDim / width, maxDim / height, 1);
-      width = width * scale;
-      height = height * scale;
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
 
       const canvas = document.createElement('canvas');
       canvas.width = width;
@@ -874,11 +767,9 @@
       ctx.drawImage(img, 0, 0, width, height);
 
       const dataUrl = canvas.toDataURL('image/jpeg', quality);
-
       return { dataUrl, width, height };
     }
 
-    // Photo preview: bigger thumbnails, clickable to full size
     if (photosInput) {
       photosInput.addEventListener('change', function () {
         photosPreview.innerHTML = '';
@@ -893,7 +784,7 @@
 
             const link = document.createElement('a');
             link.href = e.target.result;
-            link.target = "_blank";   // open full-size in new tab
+            link.target = "_blank";
             link.appendChild(img);
 
             photosPreview.appendChild(link);
@@ -903,82 +794,101 @@
       });
     }
 
-    // Download form as PDF (form screenshot + compressed full-res photos)
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        const pdf = new jsPDF({
-          orientation: 'p',
-          unit: 'pt',
-          format: 'a4',
-          compress: true
-        });
+        // Add export-only whitespace helpers
+        document.body.classList.add('exporting');
+        window.scrollTo(0, 0);
 
         const element = document.querySelector('.container');
 
-        window.scrollTo(0, 0);
+        // Use a slightly higher scale for clarity without blowing up file size
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          windowWidth: document.documentElement.clientWidth
+        });
 
-        const canvas = await html2canvas(element, { scale: 2 });
         const imgData = canvas.toDataURL('image/png');
+
+        // Letter size (8.5 x 11)
+        const pdf = new jsPDF({
+          orientation: 'p',
+          unit: 'pt',
+          format: 'letter',
+          compress: true
+        });
 
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Slightly shrink overall image so there is more padding at page bottoms
-        const scaleFactor = 0.94;
-        const imgWidth = pageWidth * scaleFactor;
-        const imgHeight = canvas.height * imgWidth / canvas.width;
-        const xOffset = (pageWidth - imgWidth) / 2;
+        // Keep a consistent inner margin on Letter pages
+        const sidePad = 26; // pt
+        const topPad = 18;  // pt
+        const bottomPad = 22; // pt
+        const usableW = pageWidth - sidePad * 2;
+        const usableH = pageHeight - topPad - bottomPad;
 
-        let heightLeft = imgHeight;
-        let position = 0;
+        // Fit the captured image to usable width
+        const imgWidth = usableW;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // First page(s): screenshot of the form
-        pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        // Slice the long screenshot into Letter pages cleanly
+        let yOffset = 0;
+        let pageIndex = 0;
 
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'PNG', xOffset, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+        while (yOffset < imgHeight - 1) {
+          if (pageIndex > 0) pdf.addPage();
+
+          // This y is negative to "slide" the screenshot up under the page window
+          const y = topPad - yOffset;
+
+          pdf.addImage(imgData, 'PNG', sidePad, y, imgWidth, imgHeight, undefined, 'FAST');
+
+          // Move down by one page of usable height
+          yOffset += usableH;
+          pageIndex++;
         }
 
-        // Extra pages with COMPRESSED photos
+        // Add photo pages (one photo per page for readability)
         if (photosInput && photosInput.files.length > 0) {
-          pdf.addPage();
-          pdf.setFontSize(14);
-          pdf.text("Attached Site Photos", 40, 40);
-
-          let y = 70;
-          const x = 40;
-          const maxWidth = 500;
-          const maxHeight = 350;
-          const pageH = pdf.internal.pageSize.getHeight();
-
           for (const file of photosInput.files) {
             if (!file.type.startsWith('image/')) continue;
 
-            const { dataUrl, width, height } = await compressImage(file, 1600, 0.7);
+            const { dataUrl, width, height } = await compressImage(file, 2000, 0.78);
 
-            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            pdf.addPage();
+
+            // Header
+            pdf.setFontSize(12);
+            pdf.text(`Attached Site Photo (${VERSION})`, sidePad, 22);
+
+            // Fit photo within margins
+            const photoTop = 36;
+            const photoUsableW = pageWidth - sidePad * 2;
+            const photoUsableH = pageHeight - photoTop - bottomPad;
+
+            const ratio = Math.min(photoUsableW / width, photoUsableH / height);
             const drawW = width * ratio;
             const drawH = height * ratio;
 
-            if (y + drawH > pageH - 40) {
-              pdf.addPage();
-              y = 40;
-            }
+            const x = sidePad + (photoUsableW - drawW) / 2;
+            const y = photoTop + (photoUsableH - drawH) / 2;
 
             pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
-            y += drawH + 20;
           }
         }
 
-        pdf.save('Vista-Worksite-Inspection.pdf');
+        pdf.save(`Vista-Worksite-Inspection-${VERSION}.pdf`);
+
+        // Remove export-only helpers
+        document.body.classList.remove('exporting');
       });
     }
   </script>
