@@ -23,9 +23,8 @@
       --text-main: #101827;
       --text-muted: #6b7280;
 
-      /* PDF helpers */
-      --pdf-gap: 110px; /* whitespace target for a nicer page split */
-      --pdf-side-pad: 24px;
+      /* PDF export helpers */
+      --pdf-gap: 55px; /* export-only gap height (reduced to avoid forcing a 3rd page) */
     }
 
     * { box-sizing: border-box; }
@@ -249,14 +248,21 @@
 
     .ynna-select { width: 100%; }
 
-    /* Existing spacer row (kept) */
     .page-spacer-row td {
       padding: 30px 10px;
       border: none;
       background: transparent;
     }
 
-    /* Photos */
+    /* Export-only gap to encourage a nicer break without forcing extra pages */
+    .pdf-break-gap {
+      display: none;
+      height: var(--pdf-gap);
+      background: transparent;
+      border: none;
+    }
+    body.exporting .pdf-break-gap { display: block; }
+
     .photos-preview {
       display: flex;
       flex-wrap: wrap;
@@ -275,7 +281,6 @@
 
     .photos-preview a { text-decoration: none; }
 
-    /* Buttons */
     .btn-row {
       margin-top: 26px;
       display: flex;
@@ -324,16 +329,6 @@
       margin-top: 2px;
     }
 
-    /* PDF-only page-break “gap” (hidden during normal use) */
-    .pdf-break-gap {
-      display: none;
-      height: var(--pdf-gap);
-      border-radius: 12px;
-      background: transparent;
-    }
-    body.exporting .pdf-break-gap { display: block; }
-
-    /* Version footer */
     .version-footer {
       margin-top: 16px;
       padding-top: 10px;
@@ -344,8 +339,10 @@
       justify-content: space-between;
       gap: 10px;
     }
-    .version-footer .left { opacity: 0.9; }
-    .version-footer .right { font-weight: 600; color: rgba(11,48,69,0.8); }
+    .version-footer .right {
+      font-weight: 600;
+      color: rgba(11,48,69,0.8);
+    }
 
     @media (max-width: 720px) {
       body { padding: 12px; }
@@ -556,7 +553,6 @@
                 <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name"></div></td>
               </tr>
 
-              <!-- Existing spacer row (kept) -->
               <tr class="page-spacer-row">
                 <td colspan="4" style="padding: 66px; border: none; background: transparent;"></td>
               </tr>
@@ -603,7 +599,7 @@
             </tbody>
           </table>
 
-          <!-- PDF-only gap to encourage a clean page slice -->
+          <!-- export-only gap to help the page slice land in whitespace -->
           <div class="pdf-break-gap"></div>
         </div>
 
@@ -718,10 +714,9 @@
           <button type="button" id="downloadPdfBtn" class="btn-primary">Download PDF</button>
         </div>
 
-        <!-- Version footer -->
         <div class="version-footer" aria-label="document version">
           <div class="left">Vista Geomatics, Worksite Inspection Form</div>
-          <div class="right">v1.1</div>
+          <div class="right">v1.2</div>
         </div>
       </form>
     </div>
@@ -732,7 +727,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    const VERSION = "v1.1";
+    const VERSION = "v1.2";
+
+    // Smaller scale to keep the form to ~2 pages on Letter
+    // If it still exports 3 pages, drop this to 0.86
+    // If it looks too small, raise to 0.90
+    const FORM_SCALE = 0.88;
+
+    // Reduce export-only gap so it helps the break without forcing an extra page
+    const PDF_GAP_PX = 55;
 
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
@@ -745,7 +748,7 @@
       });
     }
 
-    async function compressImage(file, maxDim = 1600, quality = 0.75) {
+    async function compressImage(file, maxDim = 2000, quality = 0.78) {
       const baseUrl = await fileToDataURL(file);
 
       const img = new Image();
@@ -800,13 +803,14 @@
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        // Add export-only whitespace helpers
+        // Enable export-only spacing (page-break helper)
         document.body.classList.add('exporting');
+        document.documentElement.style.setProperty('--pdf-gap', PDF_GAP_PX + 'px');
+
         window.scrollTo(0, 0);
 
         const element = document.querySelector('.container');
 
-        // Use a slightly higher scale for clarity without blowing up file size
         const canvas = await html2canvas(element, {
           scale: 2,
           backgroundColor: "#ffffff",
@@ -817,7 +821,7 @@
 
         const imgData = canvas.toDataURL('image/png');
 
-        // Letter size (8.5 x 11)
+        // Letter size
         const pdf = new jsPDF({
           orientation: 'p',
           unit: 'pt',
@@ -828,48 +832,48 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Keep a consistent inner margin on Letter pages
-        const sidePad = 26; // pt
-        const topPad = 18;  // pt
-        const bottomPad = 22; // pt
+        // Margins (pt)
+        const sidePad = 26;
+        const topPad = 18;
+        const bottomPad = 22;
+
         const usableW = pageWidth - sidePad * 2;
         const usableH = pageHeight - topPad - bottomPad;
 
-        // Fit the captured image to usable width
-        const imgWidth = usableW;
+        // Apply global fit scale to push into 2 pages
+        const imgWidth = usableW * FORM_SCALE;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // Slice the long screenshot into Letter pages cleanly
+        // Center horizontally
+        const x = sidePad + (usableW - imgWidth) / 2;
+
+        // Slice the long screenshot across pages
         let yOffset = 0;
         let pageIndex = 0;
 
         while (yOffset < imgHeight - 1) {
           if (pageIndex > 0) pdf.addPage();
 
-          // This y is negative to "slide" the screenshot up under the page window
+          // Negative y moves the big image up under the page window
           const y = topPad - yOffset;
 
-          pdf.addImage(imgData, 'PNG', sidePad, y, imgWidth, imgHeight, undefined, 'FAST');
+          pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
 
-          // Move down by one page of usable height
           yOffset += usableH;
           pageIndex++;
         }
 
-        // Add photo pages (one photo per page for readability)
+        // Photos: one per page (portrait-friendly)
         if (photosInput && photosInput.files.length > 0) {
           for (const file of photosInput.files) {
             if (!file.type.startsWith('image/')) continue;
 
-            const { dataUrl, width, height } = await compressImage(file, 2000, 0.78);
+            const { dataUrl, width, height } = await compressImage(file, 2200, 0.78);
 
             pdf.addPage();
-
-            // Header
             pdf.setFontSize(12);
             pdf.text(`Attached Site Photo (${VERSION})`, sidePad, 22);
 
-            // Fit photo within margins
             const photoTop = 36;
             const photoUsableW = pageWidth - sidePad * 2;
             const photoUsableH = pageHeight - photoTop - bottomPad;
@@ -878,16 +882,16 @@
             const drawW = width * ratio;
             const drawH = height * ratio;
 
-            const x = sidePad + (photoUsableW - drawW) / 2;
-            const y = photoTop + (photoUsableH - drawH) / 2;
+            const px = sidePad + (photoUsableW - drawW) / 2;
+            const py = photoTop + (photoUsableH - drawH) / 2;
 
-            pdf.addImage(dataUrl, 'JPEG', x, y, drawW, drawH);
+            pdf.addImage(dataUrl, 'JPEG', px, py, drawW, drawH);
           }
         }
 
         pdf.save(`Vista-Worksite-Inspection-${VERSION}.pdf`);
 
-        // Remove export-only helpers
+        // Cleanup export-only mode
         document.body.classList.remove('exporting');
       });
     }
