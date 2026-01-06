@@ -5,7 +5,6 @@
   <title>Vista Geomatics – Worksite Inspection</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- Modern fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
   <style>
@@ -16,15 +15,12 @@
 
       --bg-body: #eef3f9;
       --bg-card: #ffffff;
-      --accent: var(--vista-blue-light);
-      --accent-dark: var(--vista-blue-dark);
-      --accent-soft: #e2f0f6;
       --border-soft: #d6e2f0;
       --text-main: #101827;
       --text-muted: #6b7280;
 
-      /* PDF export helpers */
-      --pdf-gap: 55px; /* export-only gap height (reduced to avoid forcing a 3rd page) */
+      /* Export-only spacer height (tune this if needed) */
+      --export-spacer: 190px;
     }
 
     * { box-sizing: border-box; }
@@ -248,20 +244,14 @@
 
     .ynna-select { width: 100%; }
 
-    .page-spacer-row td {
-      padding: 30px 10px;
-      border: none;
-      background: transparent;
+    /* Export-only spacer row: ONLY appears during PDF export */
+    .export-spacer-row { display: none; }
+    body.exporting .export-spacer-row { display: table-row; }
+    body.exporting .export-spacer-row td {
+      padding: var(--export-spacer) 10px !important;
+      border: none !important;
+      background: transparent !important;
     }
-
-    /* Export-only gap to encourage a nicer break without forcing extra pages */
-    .pdf-break-gap {
-      display: none;
-      height: var(--pdf-gap);
-      background: transparent;
-      border: none;
-    }
-    body.exporting .pdf-break-gap { display: block; }
 
     .photos-preview {
       display: flex;
@@ -409,10 +399,7 @@
                 <td>Hazard assessment completed prior to starting work?</td>
                 <td>
                   <select name="ha_completed" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ha_completed_ca"></textarea></td>
@@ -422,10 +409,7 @@
                 <td>Hazard assessment reviewed and signed by all workers on site?</td>
                 <td>
                   <select name="ha_reviewed" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ha_reviewed_ca"></textarea></td>
@@ -435,10 +419,7 @@
                 <td>Effective Emergency Response Plan developed with emergency numbers?</td>
                 <td>
                   <select name="erp_effective" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="erp_effective_ca"></textarea></td>
@@ -448,10 +429,7 @@
                 <td>Safe work practices and safe job procedures being used?</td>
                 <td>
                   <select name="swp_used" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="swp_used_ca"></textarea></td>
@@ -461,10 +439,7 @@
                 <td>Road signs, pylons available and used as required?</td>
                 <td>
                   <select name="road_signs" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="road_signs_ca"></textarea></td>
@@ -474,10 +449,7 @@
                 <td>Work vehicle reasonably clean?</td>
                 <td>
                   <select name="vehicle_clean" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="vehicle_clean_ca"></textarea></td>
@@ -487,10 +459,7 @@
                 <td>Vista sign displayed on the truck? (ALS regulation)</td>
                 <td>
                   <select name="vista_sign" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="vista_sign_ca"></textarea></td>
@@ -500,10 +469,7 @@
                 <td>Clean and tidy work site?</td>
                 <td>
                   <select name="clean_site" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="clean_site_ca"></textarea></td>
@@ -530,10 +496,7 @@
                 <td>Hard hat worn when required?</td>
                 <td>
                   <select name="ppe_hard_hat" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ppe_hard_hat_ca"></textarea></td>
@@ -543,28 +506,23 @@
                 <td>Safety glasses or eye protection worn when required?</td>
                 <td>
                   <select name="ppe_eye" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ppe_eye_ca"></textarea></td>
                 <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name"></div></td>
               </tr>
 
-              <tr class="page-spacer-row">
-                <td colspan="4" style="padding: 66px; border: none; background: transparent;"></td>
+              <!-- Export-only spacer to push Protective Clothing to the next page cleanly -->
+              <tr class="export-spacer-row">
+                <td colspan="4"></td>
               </tr>
 
               <tr>
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
                 <td>
                   <select name="ppe_clothing" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ppe_clothing_ca"></textarea></td>
@@ -574,10 +532,7 @@
                 <td>CSA-approved footwear with 8&quot; upper worn when required?</td>
                 <td>
                   <select name="ppe_footwear" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ppe_footwear_ca"></textarea></td>
@@ -587,10 +542,7 @@
                 <td>Hearing protection available and worn if required?</td>
                 <td>
                   <select name="ppe_hearing" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="ppe_hearing_ca"></textarea></td>
@@ -598,9 +550,6 @@
               </tr>
             </tbody>
           </table>
-
-          <!-- export-only gap to help the page slice land in whitespace -->
-          <div class="pdf-break-gap"></div>
         </div>
 
         <div class="section">
@@ -620,10 +569,7 @@
                 <td>Fire extinguishers are in place, signed, and within service date?</td>
                 <td>
                   <select name="fire_ext_all" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="fire_ext_all_ca"></textarea></td>
@@ -633,10 +579,7 @@
                 <td>Alberta Level 2 first aid kit available and complete?</td>
                 <td>
                   <select name="first_aid_kit" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="first_aid_kit_ca"></textarea></td>
@@ -646,10 +589,7 @@
                 <td>Valid safety certificate available?</td>
                 <td>
                   <select name="safety_certificate" class="ynna-select">
-                    <option value="">--</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                    <option>N/A</option>
+                    <option value="">--</option><option>Yes</option><option>No</option><option>N/A</option>
                   </select>
                 </td>
                 <td><textarea name="safety_certificate_ca"></textarea></td>
@@ -676,36 +616,18 @@
         <div class="section">
           <div class="section-title">Inspector Sign-Off</div>
           <div class="grid-3">
-            <div>
-              <label for="reviewed_by">Reviewed By</label>
-              <input type="text" id="reviewed_by" name="reviewed_by">
-            </div>
-            <div>
-              <label for="inspector_name">Inspector Name</label>
-              <input type="text" id="inspector_name" name="inspector_name">
-            </div>
-            <div>
-              <label for="inspector_role">Role / Position</label>
-              <input type="text" id="inspector_role" name="inspector_role">
-            </div>
+            <div><label for="reviewed_by">Reviewed By</label><input type="text" id="reviewed_by" name="reviewed_by"></div>
+            <div><label for="inspector_name">Inspector Name</label><input type="text" id="inspector_name" name="inspector_name"></div>
+            <div><label for="inspector_role">Role / Position</label><input type="text" id="inspector_role" name="inspector_role"></div>
           </div>
         </div>
 
         <div class="section">
           <div class="section-title">Party Chief Sign-Off</div>
           <div class="grid-3">
-            <div>
-              <label for="pc_name">Party Chief Name</label>
-              <input type="text" id="pc_name" name="pc_name" required>
-            </div>
-            <div>
-              <label for="pc_signature">Signature (type name)</label>
-              <input type="text" id="pc_signature" name="pc_signature" required>
-            </div>
-            <div>
-              <label for="pc_date">Date Signed</label>
-              <input type="date" id="pc_date" name="pc_date" required>
-            </div>
+            <div><label for="pc_name">Party Chief Name</label><input type="text" id="pc_name" name="pc_name" required></div>
+            <div><label for="pc_signature">Signature (type name)</label><input type="text" id="pc_signature" name="pc_signature" required></div>
+            <div><label for="pc_date">Date Signed</label><input type="date" id="pc_date" name="pc_date" required></div>
           </div>
         </div>
 
@@ -716,26 +638,25 @@
 
         <div class="version-footer" aria-label="document version">
           <div class="left">Vista Geomatics, Worksite Inspection Form</div>
-          <div class="right">v1.2</div>
+          <div class="right">v1.3</div>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    const VERSION = "v1.2";
+    const VERSION = "v1.3";
 
-    // Smaller scale to keep the form to ~2 pages on Letter
-    // If it still exports 3 pages, drop this to 0.86
-    // If it looks too small, raise to 0.90
-    const FORM_SCALE = 0.88;
+    // Slightly bigger than v1.2 for readability, but still aimed at 2 pages
+    const FORM_SCALE = 0.90;
 
-    // Reduce export-only gap so it helps the break without forcing an extra page
-    const PDF_GAP_PX = 55;
+    // Tune this if needed:
+    // If the break still hits inside the PPE rows, increase to 220–260
+    // If it starts creating a 3rd page, reduce to 150–170
+    const EXPORT_SPACER_PX = 210;
 
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
@@ -748,7 +669,7 @@
       });
     }
 
-    async function compressImage(file, maxDim = 2000, quality = 0.78) {
+    async function compressImage(file, maxDim = 2200, quality = 0.78) {
       const baseUrl = await fileToDataURL(file);
 
       const img = new Image();
@@ -803,10 +724,9 @@
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        // Enable export-only spacing (page-break helper)
+        // Export-only mode ON (enables the spacer row)
         document.body.classList.add('exporting');
-        document.documentElement.style.setProperty('--pdf-gap', PDF_GAP_PX + 'px');
-
+        document.documentElement.style.setProperty('--export-spacer', EXPORT_SPACER_PX + 'px');
         window.scrollTo(0, 0);
 
         const element = document.querySelector('.container');
@@ -821,7 +741,6 @@
 
         const imgData = canvas.toDataURL('image/png');
 
-        // Letter size
         const pdf = new jsPDF({
           orientation: 'p',
           unit: 'pt',
@@ -832,43 +751,36 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Margins (pt)
-        const sidePad = 26;
-        const topPad = 18;
-        const bottomPad = 22;
+        // Slightly tighter margins for readability (still safe)
+        const sidePad = 18;
+        const topPad = 14;
+        const bottomPad = 18;
 
         const usableW = pageWidth - sidePad * 2;
         const usableH = pageHeight - topPad - bottomPad;
 
-        // Apply global fit scale to push into 2 pages
         const imgWidth = usableW * FORM_SCALE;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        // Center horizontally
         const x = sidePad + (usableW - imgWidth) / 2;
 
-        // Slice the long screenshot across pages
         let yOffset = 0;
         let pageIndex = 0;
 
         while (yOffset < imgHeight - 1) {
           if (pageIndex > 0) pdf.addPage();
-
-          // Negative y moves the big image up under the page window
           const y = topPad - yOffset;
-
           pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
-
           yOffset += usableH;
           pageIndex++;
         }
 
-        // Photos: one per page (portrait-friendly)
+        // Photos: one per page
         if (photosInput && photosInput.files.length > 0) {
           for (const file of photosInput.files) {
             if (!file.type.startsWith('image/')) continue;
 
-            const { dataUrl, width, height } = await compressImage(file, 2200, 0.78);
+            const { dataUrl, width, height } = await compressImage(file, 2400, 0.78);
 
             pdf.addPage();
             pdf.setFontSize(12);
@@ -891,7 +803,7 @@
 
         pdf.save(`Vista-Worksite-Inspection-${VERSION}.pdf`);
 
-        // Cleanup export-only mode
+        // Export-only mode OFF
         document.body.classList.remove('exporting');
       });
     }
