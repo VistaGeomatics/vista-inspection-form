@@ -19,7 +19,7 @@
       --text-main:#101827;
       --text-muted:#6b7280;
 
-      /* Export-only spacer (dynamic JS sets this) */
+      /* Export-only spacer height (JS sets this just before capture) */
       --export-spacer: 0px;
     }
 
@@ -221,7 +221,7 @@
 
     .ynna-select{ width:100%; }
 
-    /* Export-only spacer row (dynamic, usually small) */
+    /* Export-only spacer row: hidden normally */
     .export-spacer-row{ display:none; }
     body.exporting .export-spacer-row{ display:table-row; }
     body.exporting .export-spacer-row td{
@@ -427,10 +427,9 @@
                 <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name"></div></td>
               </tr>
 
-              <!-- dynamic spacer (only appears during export) -->
+              <!-- Export-only spacer row (JS sets exact height to push next row to page 2 if needed) -->
               <tr class="export-spacer-row"><td colspan="4"></td></tr>
 
-              <!-- anchor row we refuse to split across pages -->
               <tr id="ppeClothingRow">
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
                 <td><select name="ppe_clothing" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
@@ -527,7 +526,7 @@
 
         <div class="version-footer" aria-label="document version">
           <div class="left">Vista Geomatics, Worksite Inspection Form</div>
-          <div class="right">v1.4</div>
+          <div class="right">v1.4.1</div>
         </div>
       </form>
     </div>
@@ -538,17 +537,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    const VERSION = "v1.4";
+    const VERSION = "v1.4.1";
 
-    // Letter + 2 page target (slightly smaller than before)
+    // Letter + 2 page target
     const FORM_SCALE = 0.87;
 
-    // How close to a page break we “protect” the PPE clothing row
-    // (larger = more likely to push it to next page)
-    const PROTECT_THRESHOLD_PX = 140;
+    // If the clothing row would start within this many points of the bottom of page 1,
+    // we push it to page 2.
+    const MIN_SPACE_BEFORE_ROW_PT = 90;
 
-    // Clamp spacer so it never becomes ridiculous
-    const SPACER_MAX_PX = 140;
+    // Cap spacer so it never becomes huge
+    const SPACER_CAP_PX = 140;
 
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
@@ -604,27 +603,7 @@
       });
     }
 
-    // Computes how much spacer is needed to push a target row to the next PDF page
-    function computeDynamicSpacerPx({ containerEl, targetRowEl, pageUsableH }) {
-      const cRect = containerEl.getBoundingClientRect();
-      const tRect = targetRowEl.getBoundingClientRect();
-
-      // Target row’s top relative to container, in CSS pixels
-      const targetTop = tRect.top - cRect.top;
-
-      // Where we are within the current PDF page height (in CSS pixels)
-      const withinPage = targetTop % pageUsableH;
-      const remaining = pageUsableH - withinPage;
-
-      // If the row starts too close to a page break, push it down to next page
-      if (remaining < PROTECT_THRESHOLD_PX) {
-        // Push by "remaining + a tiny nudge" but clamp it
-        const needed = Math.min(remaining + 8, SPACER_MAX_PX);
-        return Math.max(0, needed);
-      }
-
-      return 0;
-    }
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
@@ -633,8 +612,12 @@
         const { jsPDF } = window.jspdf;
 
         document.body.classList.add('exporting');
+        document.documentElement.style.setProperty('--export-spacer', '0px');
 
-        // Build PDF first so we know exact page usable height in points
+        // Let layout settle before measuring
+        await new Promise(r => requestAnimationFrame(() => r()));
+
+        // Build PDF so we know exact page sizes
         const pdf = new jsPDF({
           orientation: 'p',
           unit: 'pt',
@@ -645,44 +628,51 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
-        // Margins
         const sidePad = 26;
         const topPad = 18;
         const bottomPad = 22;
 
         const usableW = pageWidth - sidePad * 2;
-        const usableH_pt = pageHeight - topPad - bottomPad;
+        const usableHpt = pageHeight - topPad - bottomPad;
 
-        // Convert PDF usable height (pt) into CSS pixels so math matches DOM coordinates.
-        // We do this by relating pt->px using an on-screen 1in reference (96px per inch).
-        // 1pt = 1/72 in, 1in = 96px => 1pt = 96/72 px = 1.3333px
+        // Convert points to pixels for DOM math (96px/in, 72pt/in)
         const PT_TO_PX = 96 / 72;
-        const usableH_px = usableH_pt * PT_TO_PX;
+        const usableHpx = usableHpt * PT_TO_PX;
 
-        // Set dynamic spacer just before capture
+        // Compute how tall the screenshot image will be on the PDF
         const containerEl = document.querySelector('.container');
-        const targetRowEl = document.getElementById('ppeClothingRow');
+        const rowEl = document.getElementById('ppeClothingRow');
 
-        // Reset spacer to 0 first so measurement is correct
-        document.documentElement.style.setProperty('--export-spacer', '0px');
+        // Measure row position within container (px)
+        const cRect = containerEl.getBoundingClientRect();
+        const rRect = rowEl.getBoundingClientRect();
+        const rowTopPx = rRect.top - cRect.top;
 
-        // Wait a frame for layout to settle
-        await new Promise(r => requestAnimationFrame(() => r()));
+        // The screenshot image is scaled to FORM_SCALE when drawn into the PDF.
+        // So we scale the rowTop the same way to predict where it lands in PDF space.
+        const rowTopPtApprox = (rowTopPx / PT_TO_PX) * FORM_SCALE;
 
-        const spacerPx = computeDynamicSpacerPx({
-          containerEl,
-          targetRowEl,
-          pageUsableH: usableH_px / (2 / FORM_SCALE)  // adjust to match capture scaling + final draw scaling
-        });
+        // Where within page 1 usable height (pt) would the row start?
+        const withinPagePt = rowTopPtApprox % usableHpt;
+        const remainingPt = usableHpt - withinPagePt;
 
-        // Apply computed spacer (usually small, only when needed)
-        document.documentElement.style.setProperty('--export-spacer', spacerPx + 'px');
+        // If it's too close to the bottom, push it to next page using spacer row.
+        if (remainingPt < MIN_SPACE_BEFORE_ROW_PT) {
+          // We want to add just enough spacer so the row start moves past the page break.
+          // Needed shift ≈ remainingPt + small buffer.
+          const neededShiftPt = remainingPt + 10;
+          const neededShiftPx = neededShiftPt * PT_TO_PX;
 
-        // Wait another frame so spacer is applied before rendering
-        await new Promise(r => requestAnimationFrame(() => r()));
+          // Clamp so we never create a huge blank gap
+          const spacerPx = clamp(neededShiftPx, 0, SPACER_CAP_PX);
+          document.documentElement.style.setProperty('--export-spacer', spacerPx + 'px');
 
+          // Let spacer apply before capture
+          await new Promise(r => requestAnimationFrame(() => r()));
+        }
+
+        // Capture after spacer applied
         window.scrollTo(0, 0);
-
         const canvas = await html2canvas(containerEl, {
           scale: 2,
           backgroundColor: "#ffffff",
@@ -693,12 +683,10 @@
 
         const imgData = canvas.toDataURL('image/png');
 
-        // Compute image draw size
         const imgWidth = usableW * FORM_SCALE;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         const x = sidePad + (usableW - imgWidth) / 2;
 
-        // Add pages from one tall image
         let yOffset = 0;
         let pageIndex = 0;
 
@@ -706,7 +694,7 @@
           if (pageIndex > 0) pdf.addPage();
           const y = topPad - yOffset;
           pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
-          yOffset += usableH_pt;
+          yOffset += usableHpt;
           pageIndex++;
         }
 
