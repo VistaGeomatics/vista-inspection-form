@@ -14,17 +14,16 @@
       --vista-blue-light:#2a7fa3;
       --vista-blue-dark:#0b3045;
 
-      --bg-body:#eef3f9;
       --bg-card:#ffffff;
       --border-soft:#d6e2f0;
       --text-main:#101827;
       --text-muted:#6b7280;
 
-      /* export-only spacer (small nudge) */
-      --export-spacer: 70px;
+      /* Export-only spacer (dynamic JS sets this) */
+      --export-spacer: 0px;
     }
 
-    *{box-sizing:border-box;}
+    *{ box-sizing:border-box; }
 
     body{
       font-family:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -34,7 +33,7 @@
       color:var(--text-main);
     }
 
-    .page-wrap{max-width:1200px;margin:0 auto;}
+    .page-wrap{ max-width:1200px; margin:0 auto; }
 
     .container{
       background:var(--bg-card);
@@ -43,7 +42,6 @@
       overflow:hidden;
       position:relative;
     }
-
     .container::before{
       content:"";
       position:absolute;
@@ -64,7 +62,6 @@
       color:#fff;
       overflow:hidden;
     }
-
     .header-bar::after{
       content:"";
       position:absolute;
@@ -81,7 +78,6 @@
       flex-direction:column;
       gap:4px;
     }
-
     .header-left h1{
       font-size:1.7rem;
       letter-spacing:.12em;
@@ -91,11 +87,9 @@
       font-weight:400;
       line-height:1.1;
     }
-
-    .vista-bold{font-weight:700;}
-    .geomatics-regular{font-weight:400;}
-
-    .header-left p{margin:0;font-size:.96rem;opacity:.92;}
+    .vista-bold{ font-weight:700; }
+    .geomatics-regular{ font-weight:400; }
+    .header-left p{ margin:0; font-size:.96rem; opacity:.92; }
 
     .header-logo{
       position:relative;
@@ -122,11 +116,10 @@
       position:relative;
       overflow:hidden;
     }
-
     .section::before{
       content:"";
       position:absolute;
-      top:0;left:0;right:0;
+      top:0; left:0; right:0;
       height:5px;
       background: linear-gradient(90deg, var(--vista-blue-light), var(--vista-blue-dark));
     }
@@ -145,13 +138,11 @@
       box-shadow:0 0 0 1px rgba(22,95,125,0.12);
       position:relative;
     }
-
     .section-title::before{
       content:"";
       display:inline-block;
-      width:8px;height:8px;
+      width:8px; height:8px;
       border-radius:999px;
-
       background: radial-gradient(circle, #fff 0, var(--vista-blue-light) 50%, var(--vista-blue-dark) 100%);
       box-shadow:0 0 0 4px rgba(22,95,125,0.25);
     }
@@ -194,15 +185,15 @@
       transform: translateY(-1px);
     }
 
-    textarea{min-height:80px;resize:vertical;}
+    textarea{ min-height:80px; resize:vertical; }
 
     .fix-by{
       display:flex;
       gap:6px;
       flex-wrap:wrap;
     }
-    .fix-by input[type="date"]{flex:0 0 130px;}
-    .fix-by input[type="text"]{flex:1;}
+    .fix-by input[type="date"]{ flex:0 0 130px; }
+    .fix-by input[type="text"]{ flex:1; }
 
     table{
       width:100%;
@@ -212,13 +203,11 @@
       border-radius:10px;
       overflow:hidden;
     }
-
     th, td{
       border:1px solid #d7e2f1;
       padding:8px 10px;
       vertical-align:top;
     }
-
     th{
       background: linear-gradient(90deg, #e6f1fb, #dde9f7);
       text-align:left;
@@ -227,17 +216,16 @@
       letter-spacing:.04em;
       color:#4b5563;
     }
+    tbody tr:nth-child(even){ background:#f7faff; }
+    tbody tr:hover{ background:#edf4ff; transition:background .15s ease; }
 
-    tbody tr:nth-child(even){background:#f7faff;}
-    tbody tr:hover{background:#edf4ff;transition:background .15s ease;}
+    .ynna-select{ width:100%; }
 
-    .ynna-select{width:100%;}
-
-    /* Export-only spacer row (small nudge) */
-    .export-spacer-row{display:none;}
-    body.exporting .export-spacer-row{display:table-row;}
+    /* Export-only spacer row (dynamic, usually small) */
+    .export-spacer-row{ display:none; }
+    body.exporting .export-spacer-row{ display:table-row; }
     body.exporting .export-spacer-row td{
-      padding: var(--export-spacer) 10px !important;
+      padding: var(--export-spacer) 0 !important;
       border:none !important;
       background:transparent !important;
     }
@@ -256,7 +244,7 @@
       border:1px solid #d1e0f0;
       box-shadow:0 6px 14px rgba(5,41,66,.18);
     }
-    .photos-preview a{text-decoration:none;}
+    .photos-preview a{ text-decoration:none; }
 
     .btn-row{
       margin-top:26px;
@@ -265,7 +253,6 @@
       justify-content:flex-end;
       flex-wrap:wrap;
     }
-
     button{
       padding:9px 20px;
       font-size:.9rem;
@@ -275,9 +262,8 @@
       font-weight:600;
       letter-spacing:.05em;
       text-transform:uppercase;
-      transition:transform .12s ease, box-shadow .12s ease, background .12s ease, color .12s ease, border-color .12s ease;
+      transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
     }
-
     .btn-primary{
       background: linear-gradient(120deg, var(--vista-blue-light) 0%, var(--vista-blue) 40%, var(--vista-blue-dark) 100%);
       color:#fff;
@@ -287,7 +273,6 @@
       transform:translateY(-1px);
       box-shadow:0 14px 32px rgba(5,41,66,.55);
     }
-
     .btn-secondary{
       background:#f3f4f6;
       color:var(--text-main);
@@ -319,15 +304,16 @@
       color:rgba(11,48,69,0.8);
     }
 
-    @media (max-width: 720px){
-      body{padding:12px;}
-      form{padding:18px 16px 20px;}
-      .header-bar{flex-direction:column;align-items:flex-start;gap:10px;}
-      .header-logo{align-self:flex-end;height:56px;}
-      .version-footer{flex-direction:column;align-items:flex-start;}
+    @media (max-width:720px){
+      body{ padding:12px; }
+      form{ padding:18px 16px 20px; }
+      .header-bar{ flex-direction:column; align-items:flex-start; gap:10px; }
+      .header-logo{ align-self:flex-end; height:56px; }
+      .version-footer{ flex-direction:column; align-items:flex-start; }
     }
   </style>
 </head>
+
 <body>
   <div class="page-wrap">
     <div class="container">
@@ -344,18 +330,9 @@
           <div class="section-title">General Information</div>
           <p class="section-subtext">Basic project and site details for this inspection.</p>
           <div class="grid-3">
-            <div>
-              <label for="client">Client</label>
-              <input type="text" id="client" name="client" required>
-            </div>
-            <div>
-              <label for="location">Location</label>
-              <input type="text" id="location" name="location" required>
-            </div>
-            <div>
-              <label for="date">Date</label>
-              <input type="date" id="date" name="date" required>
-            </div>
+            <div><label for="client">Client</label><input type="text" id="client" name="client" required></div>
+            <div><label for="location">Location</label><input type="text" id="location" name="location" required></div>
+            <div><label for="date">Date</label><input type="date" id="date" name="date" required></div>
           </div>
         </div>
 
@@ -427,7 +404,7 @@
         <div class="section">
           <div class="section-title">Personal Protective Equipment (PPE)</div>
           <p class="section-subtext">Confirm required PPE is available and being used appropriately.</p>
-          <table>
+          <table id="ppeTable">
             <thead>
               <tr>
                 <th style="width:40%;">Inspection Item</th>
@@ -450,10 +427,11 @@
                 <td><div class="fix-by"><input type="date" name="ppe_eye_fix_date"><input type="text" name="ppe_eye_fix_name"></div></td>
               </tr>
 
-              <!-- Export-only small spacer to avoid row splitting -->
+              <!-- dynamic spacer (only appears during export) -->
               <tr class="export-spacer-row"><td colspan="4"></td></tr>
 
-              <tr>
+              <!-- anchor row we refuse to split across pages -->
+              <tr id="ppeClothingRow">
                 <td>Protective clothing (gloves, coveralls) worn when required?</td>
                 <td><select name="ppe_clothing" class="ynna-select"><option value="">--</option><option>Yes</option><option>No</option><option>N/A</option></select></td>
                 <td><textarea name="ppe_clothing_ca"></textarea></td>
@@ -549,7 +527,7 @@
 
         <div class="version-footer" aria-label="document version">
           <div class="left">Vista Geomatics, Worksite Inspection Form</div>
-          <div class="right">v1.3.1</div>
+          <div class="right">v1.4</div>
         </div>
       </form>
     </div>
@@ -560,13 +538,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-    const VERSION = "v1.3.1";
+    const VERSION = "v1.4";
 
-    // Keep it small so it fits in ~2 pages on Letter
-    const FORM_SCALE = 0.88;
+    // Letter + 2 page target (slightly smaller than before)
+    const FORM_SCALE = 0.87;
 
-    // Small nudge only (fixes row splits without a big gap)
-    const EXPORT_SPACER_PX = 70;
+    // How close to a page break we “protect” the PPE clothing row
+    // (larger = more likely to push it to next page)
+    const PROTECT_THRESHOLD_PX = 140;
+
+    // Clamp spacer so it never becomes ridiculous
+    const SPACER_MAX_PX = 140;
 
     const photosInput = document.getElementById('photos');
     const photosPreview = document.getElementById('photosPreview');
@@ -599,8 +581,7 @@
       const ctx = c.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      const dataUrl = c.toDataURL('image/jpeg', quality);
-      return { dataUrl, width, height };
+      return { dataUrl: c.toDataURL('image/jpeg', quality), width, height };
     }
 
     if (photosInput) {
@@ -623,30 +604,37 @@
       });
     }
 
+    // Computes how much spacer is needed to push a target row to the next PDF page
+    function computeDynamicSpacerPx({ containerEl, targetRowEl, pageUsableH }) {
+      const cRect = containerEl.getBoundingClientRect();
+      const tRect = targetRowEl.getBoundingClientRect();
+
+      // Target row’s top relative to container, in CSS pixels
+      const targetTop = tRect.top - cRect.top;
+
+      // Where we are within the current PDF page height (in CSS pixels)
+      const withinPage = targetTop % pageUsableH;
+      const remaining = pageUsableH - withinPage;
+
+      // If the row starts too close to a page break, push it down to next page
+      if (remaining < PROTECT_THRESHOLD_PX) {
+        // Push by "remaining + a tiny nudge" but clamp it
+        const needed = Math.min(remaining + 8, SPACER_MAX_PX);
+        return Math.max(0, needed);
+      }
+
+      return 0;
+    }
+
     const downloadBtn = document.getElementById('downloadPdfBtn');
 
     if (downloadBtn) {
       downloadBtn.addEventListener('click', async () => {
         const { jsPDF } = window.jspdf;
 
-        // Export-only mode ON (shows the spacer row)
         document.body.classList.add('exporting');
-        document.documentElement.style.setProperty('--export-spacer', EXPORT_SPACER_PX + 'px');
 
-        window.scrollTo(0, 0);
-
-        const element = document.querySelector('.container');
-
-        const canvas = await html2canvas(element, {
-          scale: 2,
-          backgroundColor: "#ffffff",
-          useCORS: true,
-          logging: false,
-          windowWidth: document.documentElement.clientWidth
-        });
-
-        const imgData = canvas.toDataURL('image/png');
-
+        // Build PDF first so we know exact page usable height in points
         const pdf = new jsPDF({
           orientation: 'p',
           unit: 'pt',
@@ -657,18 +645,60 @@
         const pageWidth = pdf.internal.pageSize.getWidth();
         const pageHeight = pdf.internal.pageSize.getHeight();
 
+        // Margins
         const sidePad = 26;
         const topPad = 18;
         const bottomPad = 22;
 
         const usableW = pageWidth - sidePad * 2;
-        const usableH = pageHeight - topPad - bottomPad;
+        const usableH_pt = pageHeight - topPad - bottomPad;
 
+        // Convert PDF usable height (pt) into CSS pixels so math matches DOM coordinates.
+        // We do this by relating pt->px using an on-screen 1in reference (96px per inch).
+        // 1pt = 1/72 in, 1in = 96px => 1pt = 96/72 px = 1.3333px
+        const PT_TO_PX = 96 / 72;
+        const usableH_px = usableH_pt * PT_TO_PX;
+
+        // Set dynamic spacer just before capture
+        const containerEl = document.querySelector('.container');
+        const targetRowEl = document.getElementById('ppeClothingRow');
+
+        // Reset spacer to 0 first so measurement is correct
+        document.documentElement.style.setProperty('--export-spacer', '0px');
+
+        // Wait a frame for layout to settle
+        await new Promise(r => requestAnimationFrame(() => r()));
+
+        const spacerPx = computeDynamicSpacerPx({
+          containerEl,
+          targetRowEl,
+          pageUsableH: usableH_px / (2 / FORM_SCALE)  // adjust to match capture scaling + final draw scaling
+        });
+
+        // Apply computed spacer (usually small, only when needed)
+        document.documentElement.style.setProperty('--export-spacer', spacerPx + 'px');
+
+        // Wait another frame so spacer is applied before rendering
+        await new Promise(r => requestAnimationFrame(() => r()));
+
+        window.scrollTo(0, 0);
+
+        const canvas = await html2canvas(containerEl, {
+          scale: 2,
+          backgroundColor: "#ffffff",
+          useCORS: true,
+          logging: false,
+          windowWidth: document.documentElement.clientWidth
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+
+        // Compute image draw size
         const imgWidth = usableW * FORM_SCALE;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
         const x = sidePad + (usableW - imgWidth) / 2;
 
+        // Add pages from one tall image
         let yOffset = 0;
         let pageIndex = 0;
 
@@ -676,7 +706,7 @@
           if (pageIndex > 0) pdf.addPage();
           const y = topPad - yOffset;
           pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
-          yOffset += usableH;
+          yOffset += usableH_pt;
           pageIndex++;
         }
 
@@ -708,8 +738,9 @@
 
         pdf.save(`Vista-Worksite-Inspection-${VERSION}.pdf`);
 
-        // Export-only mode OFF
+        // Cleanup
         document.body.classList.remove('exporting');
+        document.documentElement.style.setProperty('--export-spacer', '0px');
       });
     }
   </script>
