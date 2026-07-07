@@ -81,6 +81,18 @@
 
   .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
 
+  /* Client autocomplete */
+  .client-wrap { position: relative; }
+  .client-dropdown {
+    display: none; position: absolute; top: calc(100% + 2px); left: 0; right: 0; z-index: 999;
+    background: #fff; border: 1px solid var(--blueL); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(5,41,66,0.18); max-height: 220px; overflow-y: auto; padding: 4px 0;
+  }
+  .client-dropdown.open { display: block; }
+  .client-option { padding: 7px 12px; font-size: 0.8rem; cursor: pointer; color: var(--text-main); border-radius: 6px; margin: 1px 4px; transition: background 0.1s; }
+  .client-option:hover, .client-option.active { background: rgba(37,99,235,0.10); color: var(--navy); font-weight: 600; }
+  .client-option mark { background: none; color: var(--blue); font-weight: 700; }
+
   .section-card {
     margin-top: 12px; padding: 12px 14px 14px; border-radius: 12px;
     border: 1px solid var(--border-soft);
@@ -200,7 +212,11 @@
         <div class="section-card" style="margin-top:0;">
           <div class="section-header"><div class="section-title">General Information</div></div>
           <div class="grid-3">
-            <div><label for="client">Client</label><input type="text" id="client" name="client"></div>
+            <div class="client-wrap" id="clientWrap">
+              <label for="client">Client</label>
+              <input type="text" id="client" name="client" autocomplete="off" placeholder="Type to search or enter manually">
+              <div class="client-dropdown" id="clientDropdown"></div>
+            </div>
             <div><label for="location">Location</label><input type="text" id="location" name="location"></div>
             <div><label for="date">Date</label><input type="date" id="date" name="date"></div>
           </div>
@@ -378,6 +394,93 @@ populateInspectionTables();
     const next = !document.body.classList.contains('outdoor-mode');
     apply(next);
     try { localStorage.setItem(STORAGE_KEY, next ? '1' : '0'); } catch (_) {}
+  });
+})();
+
+// ============================================================
+// CLIENT AUTOCOMPLETE
+// ============================================================
+(function initClientAutocomplete() {
+  var CLIENTS = [
+    'Albi Homes', 'Breckenridge', 'Brookfield Residential', 'Calbridge Homes', 'Crystal Creek Homes',
+    'Fifty6 Homes', 'Genesis', 'Golden Triangle', 'Homes by Us',
+    'Janssen Homes', 'Jayman Homes', 'Kingsmith Homes', 'Morrison Homes',
+    'NuVista Homes', 'RP Homes', 'Shane Homes', 'Truman', 'West Creek',
+    'Cana', 'Enmax', 'Kelmar', 'Rogers', 'Telus', 'Volker Stevin',
+    'Pipestone', 'Strathcona Resources', 'Cavvy Energy', 'Stantec',
+    'Primary Engineering'
+  ];
+
+  var input = document.getElementById('client');
+  var dropdown = document.getElementById('clientDropdown');
+  if (!input || !dropdown) return;
+
+  var activeIdx = -1;
+  var matches = [];
+
+  function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function highlight(text, query) {
+    if (!query) return escHtml(text);
+    var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+    return escHtml(text).replace(re, '<mark>$1</mark>');
+  }
+
+  function openDropdown() {
+    var q = input.value.trim().toLowerCase();
+    matches = q ? CLIENTS.filter(function(c) { return c.toLowerCase().includes(q); }) : CLIENTS.slice();
+    if (!matches.length) { closeDropdown(); return; }
+    activeIdx = -1;
+    dropdown.innerHTML = matches.map(function(c, i) {
+      return '<div class="client-option" data-idx="' + i + '">' + highlight(c, q) + '</div>';
+    }).join('');
+    dropdown.classList.add('open');
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove('open');
+    dropdown.innerHTML = '';
+    activeIdx = -1;
+    matches = [];
+  }
+
+  function selectClient(name) {
+    input.value = name;
+    closeDropdown();
+    if (window.__vistaAutosaveSave) window.__vistaAutosaveSave();
+    if (typeof refreshCoreFieldHighlights === 'function') refreshCoreFieldHighlights();
+  }
+
+  input.addEventListener('input', openDropdown);
+  input.addEventListener('focus', openDropdown);
+
+  input.addEventListener('keydown', function(e) {
+    if (!dropdown.classList.contains('open')) return;
+    var opts = dropdown.querySelectorAll('.client-option');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, opts.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, -1);
+    } else if (e.key === 'Enter' && activeIdx >= 0) {
+      e.preventDefault();
+      selectClient(matches[activeIdx]);
+      return;
+    } else if (e.key === 'Escape') {
+      closeDropdown(); return;
+    }
+    opts.forEach(function(o, i) { o.classList.toggle('active', i === activeIdx); });
+  });
+
+  dropdown.addEventListener('mousedown', function(e) {
+    var opt = e.target.closest('.client-option');
+    if (!opt) return;
+    e.preventDefault();
+    selectClient(matches[parseInt(opt.dataset.idx, 10)]);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('#clientWrap')) closeDropdown();
   });
 })();
 
